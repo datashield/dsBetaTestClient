@@ -1,3 +1,11 @@
+#' @title
+#' ds.metaFor
+#'
+#' @description
+#' TODO
+#'
+#' @export
+#'
 
 ds.metaFor <- function(ests=NULL, SEs=NULL){
 library(metagen)

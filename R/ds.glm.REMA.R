@@ -1,3 +1,11 @@
+#' @title
+#' ds.glm.REMA
+#'
+#' @description
+#' TODO
+#'
+#' @export
+#'
 
 ds.glm.REMA <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weights=NULL,
                checks=FALSE, maxit=15, CI=0.95, viewIter=FALSE, datasources=NULL) {
