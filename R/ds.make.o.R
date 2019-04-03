@@ -1,4 +1,4 @@
-#' 
+
 #' @title ds.make.o
 #' @description Makes (calculates) a new object in the R environment on the
 #' server side. ds.make is equivalent to ds.assign, but runs slightly faster.
@@ -51,12 +51,8 @@
 #' see example 1 below. If toAssign is a simple pre-existing data object, it will simply be copied and assigned as having a second name
 #' as specified by the newobject argument - e.g. see example 1 below. One bug identified
 #' @param newobj the name of the new object
-#' @param datasources specifies the particular opal object(s) to use, if it is not specified
-#' the default set of opals will be used. The default opals are always called default.opals.
-#' This parameter is set without inverted commas: e.g. datasources=opals.em or datasources=default.opals
-#' If you wish to specify the second opal server in a set of three, the parameter is specified:
-#' e.g. datasources=opals.em[2]. If you wish to specify the first and third opal servers in a set specify:
-#' e.g. datasources=opals.em[2,3]
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+#' the default set of connections will be used: see \link{datashield.connections_default}.
 #' @return the object specified by the newobj argument (or default name newObject) is written to the
 #' serverside and a validity message indicating whether the newobject has been correctly
 #' created at each source is returned to the client. If it has not been correctly created the return object
@@ -64,21 +60,21 @@
 #' content indicated by a valid class. 
 #' @author DataSHIELD Development Team
 #' @export
-#' @examples {
+#' @examples \donttest{
 #'
 #' ##EXAMPLE 1
 #' ##CONVERT PROPORTIONS IN prop.rand TO log(odds) IN logodds.rand
 #' #ds.make.o("(prop.rand)/(1-prop.rand)","odds.rand")
 #' #ds.make.o("log(odds.rand)","logodds.rand")
-#' 
-#' 
+
+
 #'
 #' ##EXAMPLE 2
 #' ##MISCELLANEOUS ARITHMETIC OPERATORS: ARBITRARY CALCULATION
 #' ##USE DEFAULT NEW OBJECT NAME
 #' #ds.make.o("((age.60+bmi.26)*(noise.56-pm10.16))/3.2")
-#' 
-#' 
+
+
 #'
 #' ##EXAMPLE 3
 #' ##MISCELLANEOUS OPERATORS WITHIN FUNCTIONS (female.n is binary 1/0 so female.n2 = female.n
@@ -88,12 +84,12 @@
 #' #ds.make.o("(2*female.n)+(log.surv)-(female.n2*2)","output.test.1") 
 #' #ds.make.o("exp(output.test.1)","output.test")
 #' }
-#' 
+
 ds.make.o<-function(toAssign=NULL, newobj="newObject", datasources=NULL){
   
-  # if no opal login details are provided look for 'opal' objects in the environment
+  # look for DS connections
   if(is.null(datasources)){
-    datasources <- findLoginObjects()
+    datasources <- datashield.connections_find()
   }
 
   

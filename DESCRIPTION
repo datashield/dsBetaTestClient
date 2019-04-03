@@ -11,6 +11,15 @@ Depends:
     dsStatsClient,
     dsGraphicsClient,
     dsModellingClient,
-    opal
+    DSI,
+    stats
+Suggests:
+    knitr,
+    DSLite,
+    dsBetaTest
+URL: http://datashield.ac.uk
+BugReports: https://github.com/datashield/dsBetaTestClient
 RoxygenNote: 6.1.1
+VignetteBuilder: knitr
 Encoding: UTF-8
+LazyData: true

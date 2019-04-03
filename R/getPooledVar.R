@@ -1,11 +1,11 @@
-#' 
+
 #' @title Gets a pooled variance
 #' @description This is an internal function.
 #' @details This function is called to avoid calling the client function 'ds.var' 
 #' which may stop the process due to some checks not required when computing a mean inside 
 #' a function.
-#' @param dtsources a list of opal object(s) obtained after login in to opal servers;
-#' these objects hold also the data assign to R, as \code{dataframe}, from opal datasources.
+#' @param dtsources a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+#' the default set of connections will be used: see \link{datashield.connections_default}.
 #' @param x a character, the name of a numeric vector
 #' @keywords internal
 #' @return a pooled variance
@@ -15,14 +15,14 @@ getPooledVar <- function(dtsources, x){
   num.sources <- length(dtsources)
   
   cally <- paste0("varDS(", x, ")")
-  var.local <- opal::datashield.aggregate(dtsources, as.symbol(cally))
+  var.local <- datashield.aggregate(dtsources, as.symbol(cally))
   
   cally <- paste0("NROW(", x, ")")
-  length.local <- opal::datashield.aggregate(dtsources, cally)
+  length.local <- datashield.aggregate(dtsources, cally)
 
   # get the number of entries with missing values
   cally <- paste0("numNaDS(", x, ")")
-  numNA.local <- opal::datashield.aggregate(dtsources, cally)
+  numNA.local <- datashield.aggregate(dtsources, cally)
 
   length.total <- 0
   sum.weighted <- 0

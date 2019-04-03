@@ -15,16 +15,13 @@
 
 context("dsBetaTestClient::ds.asFactor.o")
 
-options(opal.server1="survival1", opal.server2="survival2", opal.server3="survival3")
-options(opal.table1='SURVIVAL.EXPAND_WITH_MISSING1', opal.table2='SURVIVAL.EXPAND_WITH_MISSING2', opal.table3='SURVIVAL.EXPAND_WITH_MISSING3')
+logindata <- DSLite::setupSURVIVALTest("dsBetaTest", env = environment())
 options(datashield.variables=list('survtime', 'time.id', 'female', 'age.60'))
-source("setup.R")
+conns <- datashield.login(logins=logindata, assign=TRUE, variables=getOption("datashield.variables", NULL))
 
 #
 # Tests
 #
-
-context("dsBetaTestClient::ds.asFactor.o()")
 
 ds.asNumeric("D$time.id","TID")
 
@@ -97,6 +94,6 @@ test_that("with fixed.dummy.vars of TRUE and baseline.level of 6", {
 # Tear down
 #
 
-source("teardown.R")
+datashield.logout(conns)
 
 context("dsBetaTestClient::ds.asFactor.o done")

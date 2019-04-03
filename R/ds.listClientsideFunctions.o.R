@@ -1,4 +1,4 @@
-#' 
+
 #' @title ds.listClientsideFunctions.o calling no server-side functions 
 #' @description Lists all current client-side functions
 #' @details Depending on choice of arguments can list all client-side functions

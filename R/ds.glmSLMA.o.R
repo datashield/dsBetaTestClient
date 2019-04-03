@@ -1,10 +1,10 @@
-#' 
+
 #' @title ds.glmSLMA.o calling glmDS1.o, glmSLMADS2.o
 #' @description Fits a generalized linear model (glm) on data from a single or multiple sources
-#' @details Fits a glm on data from a single source or from multiple sources. In the latter case 
+#' @details Fits a glm on data from a single source or from multiple sources. In the latter case
 #' (when using ds.glmSLMA.o), the glm is fitted to convergence in each data source and the
 #' estimates and standard errors
-#' returned from each study separately. When these are then pooled using a function such as 
+#' returned from each study separately. When these are then pooled using a function such as
 #' ds.metafor, this is a form of study level meta-analysis (SLMA). This contrasts with the setting
 #' when ds.glm is used to fit a glm to multiple sources. In that case the update at each
 #' iteration uses data from all sources simultaneously and returns the updated parameter
@@ -14,7 +14,7 @@
 #' glm() function in R. The SLMA approach offers some advantages when there is marked heterogeneity
 #' between sources that cannot simply be corrected with fixed effects each reflecting a study
 #' or centre effect. In particular fixed effects cannot simply be used in this way when there
-#' there is heterogeneity in the effect of scientific interest. 
+#' there is heterogeneity in the effect of scientific interest.
 #' @param formula Denotes an object of class formula which is a character string which describes
 #' the model to be fitted. Most shortcut notation allowed by R's standard glm() function is
 #' also allowed by ds.glmSLMA. Many glms can be fitted very simply using a formula like:
@@ -45,7 +45,7 @@
 #' that the effect of each
 #' time period may now be estimated directly. For example, the effect of time
 #' period 3 is now obtained
-#' directly as TID3 rather than intercept+TID3 as was the case using the original formula. 
+#' directly as TID3 rather than intercept+TID3 as was the case using the original formula.
 #' @param family This argument identifies the error distribution function to use in
 #' the model. At present
 #' ds.glm has been written to fit family="gaussian" (i.e. a
@@ -74,10 +74,10 @@
 #' seek a small amount
 #' of funding or practical programming support from the user in order to ensure that
 #' it can be carried out
-#' in a timely manner 
+#' in a timely manner
 #' @param offset  A character string specifying the name of a variable to be used as
 #' an offset (effectively
-#' a component of the glm which has a known coefficient a-priori and so does not need to be 
+#' a component of the glm which has a known coefficient a-priori and so does not need to be
 #' estimated by the model). As an example, an offset is needed to fit a piecewise
 #' exponential regression model. Unlike the standard glm() function in R, ds.glm()
 #' only allows an offset
@@ -96,13 +96,13 @@
 #' @param dataName A character string specifying the name of an (optional) dataframe that contains
 #' all of the variables in the glm formula. This avoids you having to specify the name of the
 #' dataframe in front of each covariate in the formula e.g. if the dataframe is
-#' called 'DataFrame' you 
+#' called 'DataFrame' you
 #' avoid having to write: "DataFrame$y~DataFrame$a+DataFrame$b+DataFrame$c+DataFrame$d"
-#' Processing stops if a non existing data frame is indicated. 
+#' Processing stops if a non existing data frame is indicated.
 #' @param checks This argument is a boolean. If TRUE ds.glm then undertakes a series
 #' of checks of
 #' the structural integrity of the model that can take several minutes. Specifically
-#' it verifies that the 
+#' it verifies that the
 #' variables in the model are all defined (exist) on the server site at every study
 #' and that they have the correct characteristics required to fit a GLM. The default
 #' value is FALSE
@@ -124,16 +124,12 @@
 #' estimates and standard errors for each regression coefficient are pooled across
 #' studies using random effects meta-analysis under maximum likelihood (ML),
 #' restricted maximum likelihood (REML), or fixed effects meta-analysis (FE).
-#' @param datasources specifies the particular opal object(s) to use, if it is not specified
-#' the default set of opals will be used. The default opals are always called default.opals.
-#' This parameter is set without inverted commas: e.g. datasources=opals.em or datasources=default.opals
-#' If you wish to specify the second opal server in a set of three, the parameter is specified:
-#' e.g. datasources=opals.em[2]. If you wish to specify the first and third opal servers in a set specify:
-#' e.g. datasources=opals.em[2,3]
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+#' the default set of connections will be used: see \link{datashield.connections_default}.
 #' @return many of the elements of the output list returned by ds.glmSLMA.o from
-#' each study separately are 
+#' each study separately are
 #' equivalent to those from glm() in native R with potentially disclosive elements
-#' such as individual-level residuals and linear predictors blocked. 
+#' such as individual-level residuals and linear predictors blocked.
 #' The return results from each study appear first in the return list with one
 #' block of results from each study in the order they appear in datasources.
 #' As regards the elements within each study the most important
@@ -185,7 +181,7 @@
 #' (see input.beta.matrix.for.SLMA) these can be imported directly into a study level
 #' meta-analysis (SLMA) package such as metafor to generate estimates pooled via SLMA
 #' @return SLMA.pooled.estimates:- a matrix containing pooled estimates for each
-#' regression coefficient across all studies with pooling under SLMA via 
+#' regression coefficient across all studies with pooling under SLMA via
 #' random effects meta-analysis under maximum likelihood (ML), restricted maximum
 #' likelihood (REML) or via fixed effects meta-analysis (FE)
 #' @author DataSHIELD Development Team
@@ -196,16 +192,16 @@ checks=FALSE, maxit=15, datasources=NULL) {
 
 # details are provided look for 'opal' objects in the environment
   if(is.null(datasources)){
-    datasources <- findLoginObjects()
+    datasources <- datashield.connections_find()
   }
- 
 
-  
+
+
   # verify that 'formula' was set
   if(is.null(formula)){
     stop(" Please provide a valid regression formula!", call.=FALSE)
   }
- 
+
 # check if user gave offset or weights directly in formula, if so the argument 'offset' or 'weights'
 # to provide name of offset or weights variable
     if(sum(as.numeric(grepl('offset', formula, ignore.case=TRUE)))>0 ||
@@ -219,45 +215,45 @@ checks=FALSE, maxit=15, datasources=NULL) {
 
   formula <- as.formula(formula)
 
-  
+
   # check that 'family' was set
   if(is.null(family)){
     stop(" Please provide a valid 'family' argument!", call.=FALSE)
   }
-  
+
   # if the argument 'dataName' is set, check that the data frame is defined (i.e. exists) on the server site
   if(!(is.null(dataName))){
     defined <- isDefined(datasources, dataName)
   }
-  
+
   # beginning of optional checks - the process stops if any of these checks fails #
   if(checks){
     message(" -- Verifying the variables in the model")
     # call the function that checks the variables in the formula are defined (exist) on the server site and are not missing at complete
- 
+
    glmChecks(formula, dataName, offset, weights, datasources)
   }else{
     #message("WARNING:'checks' is set to FALSE; variables in the model are not checked and error messages may not be intelligible!")
   }
 
-#MOVE ITERATION COUNT BEFORE ASSIGNMENT OF beta.vect.next  
+#MOVE ITERATION COUNT BEFORE ASSIGNMENT OF beta.vect.next
 #Iterations need to be counted. Start off with the count at 0
   #and increment by 1 at each new iteration
   iteration.count<-0
 
   # number of 'valid' studies (those that passed the checks) and vector of beta values
   numstudies <- length(datasources)
- 
+
 
 #ARBITRARY LENGTH FOR START BETAs AT THIS STAGE BUT IN LEGAL TRANSMISSION FORMAT ("0,0,0,0,0")
  beta.vect.next <- rep(0,5)
  beta.vect.temp <- paste0(as.character(beta.vect.next), collapse=",")
-  
+
 
 #IDENTIFY THE CORRECT DIMENSION FOR START BETAs VIA CALLING FIRST COMPONENT OF glmDS
-  
+
    cally1 <- call('glmDS1.o', formula, family, weights, dataName)
-   
+
    study.summary.0 <- datashield.aggregate(datasources, cally1)
 
 
@@ -335,30 +331,30 @@ if(sum.y.invalid>0||sum.Xpar.invalid>0||sum.w.invalid>0||sum.glm.saturation.inva
                 glm.overparameterized=glm.saturation.invalid,
         errorMessage=errorMessage
                 ))
-stop("DATA ERROR") 
+stop("DATA ERROR")
  }
 
-   
+
 
    beta.vect.next <- rep(0,num.par.glm)
    beta.vect.temp <- paste0(as.character(beta.vect.next), collapse=",")
- 
+
 
   #Provide arbitrary starting value for deviance to enable subsequent calculation of the
   #change in deviance between iterations
   dev.old<-9.99e+99
-  
+
   #Convergence state needs to be monitored.
   converge.state<-FALSE
-  
+
   #Define a convergence criterion. This value of epsilon corresponds to that used
   #by default for GLMs in R (see section S3 for details)
   epsilon<-1.0e-08
-  
+
   f<-NULL
 
 #NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
- 
+
     cally2 <- call('glmSLMADS2.o', formula, family, offset, weights, dataName)
 
     study.summary <- datashield.aggregate(datasources, cally2)
@@ -367,7 +363,7 @@ stop("DATA ERROR")
 
   for(j in 1:numstudies){
 	inv.diag.se<-1/sqrt(diag(study.summary[[j]]$cov.scaled))
-	
+
 	cor.matrix<-t(diag(inv.diag.se))%*%study.summary[[j]]$cov.scaled%*%(diag(inv.diag.se))
 	study.summary[[j]]$VarCovMatrix<-study.summary[[j]]$cov.scaled
 	study.summary[[j]]$CorrMatrix<-cor.matrix
@@ -378,25 +374,25 @@ stop("DATA ERROR")
 #INTO A RANDOM EFFECTS META-ANALYSIS FUNCTION SUCH AS metafor
 
 
-#MAKE SURE THAT IF SOME STUDIES HAVE MORE PARAMETERS IN THE 
+#MAKE SURE THAT IF SOME STUDIES HAVE MORE PARAMETERS IN THE
 #FITTED glm (eg BECAUSE OF ALIASING) THE FINAL RETURN MATRICES
 #HAVE ENOUGH ROWS TO FIT THE MAXIMUM LENGTH
-  
+
 
   numcoefficients.max<-0
-  
-    for(g in 1:numstudies){		
+
+    for(g in 1:numstudies){
 		if(length(study.summary[[g]]$coefficients[,1])>numcoefficients.max){
 		numcoefficients.max<-length(study.summary[[g]]$coefficients[,1])
 		}
 	}
-	
+
   numcoefficients<-numcoefficients.max
-  
+
   betamatrix<-matrix(NA,nrow<-numcoefficients,ncol=numstudies)
   sematrix<-matrix(NA,nrow<-numcoefficients,ncol=numstudies)
-  
-  
+
+
   for(k in 1:numstudies){
     betamatrix[,k]<-study.summary[[k]]$coefficients[,1]
     sematrix[,k]<-study.summary[[k]]$coefficients[,2]
@@ -434,7 +430,7 @@ output.summary<-eval(parse(text=output.summary.text))
 #######################END OF ANNOTATION CODE
 
 SLMA.pooled.ests.matrix<-matrix(NA,nrow<-numcoefficients,ncol=6)
-			   
+
 
 if(!combine.with.metafor){
 return(output.summary)
@@ -455,7 +451,7 @@ if(combine.with.metafor){
     cat("\n\nModels in different sources vary in structure\nplease match coefficients for meta-analysis individually\n\n")
     return(output.summary)
     }
-  
+
 #IF combine.with.metafor == TRUE AND MODEL STRUCTURES MATCH ACROSS ALL STUDIES
 #CREATE STUDY LEVEL META-ANALYSIS (SLMA) ESTIMATES FOR ALL PARAMETERS
 #USING metafor() AND THREE APPROACHES TO SLMA: SLMA UNDER MAXIMUM LIKELIHOOD (SMLA-ML)
@@ -463,7 +459,7 @@ if(combine.with.metafor){
 
   dimnames(SLMA.pooled.ests.matrix)<-list(dimnames(study.summary[[1]]$coefficients)[[1]],
                                           c("pooled.ML","se.ML","pooled.REML","se.REML","pooled.FE","se.FE"))
-  
+
   for(p in 1:numcoefficients){
     rma.ML<-rma(yi=betamatrix[p,], sei=sematrix[p,], method="ML")
     rma.REML<-rma(yi=betamatrix[p,], sei=sematrix[p,], method="REML")
@@ -471,13 +467,13 @@ if(combine.with.metafor){
 
     SLMA.pooled.ests.matrix[p,1]<-rma.ML$beta
     SLMA.pooled.ests.matrix[p,2]<-rma.ML$se
-    
+
     SLMA.pooled.ests.matrix[p,3]<-rma.REML$beta
     SLMA.pooled.ests.matrix[p,4]<-rma.REML$se
 
     SLMA.pooled.ests.matrix[p,5]<-rma.FE$beta
     SLMA.pooled.ests.matrix[p,6]<-rma.FE$se
-    
+
   }
 
 }
@@ -492,4 +488,4 @@ output.summary.plus.pooled.SLMA<-eval(parse(text=output.summary.plus.pooled.SLMA
   return(output.summary.plus.pooled.SLMA)
 }
 
-# ds.glmSLMA.o 
+# ds.glmSLMA.o

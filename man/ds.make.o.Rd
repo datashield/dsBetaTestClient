@@ -15,12 +15,8 @@ as specified by the newobject argument - e.g. see example 1 below. One bug ident
 
 \item{newobj}{the name of the new object}
 
-\item{datasources}{specifies the particular opal object(s) to use, if it is not specified
-the default set of opals will be used. The default opals are always called default.opals.
-This parameter is set without inverted commas: e.g. datasources=opals.em or datasources=default.opals
-If you wish to specify the second opal server in a set of three, the parameter is specified:
-e.g. datasources=opals.em[2]. If you wish to specify the first and third opal servers in a set specify:
-e.g. datasources=opals.em[2,3]}
+\item{datasources}{a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+the default set of connections will be used: see \link{datashield.connections_default}.}
 }
 \value{
 the object specified by the newobj argument (or default name newObject) is written to the
@@ -79,21 +75,17 @@ ds.make.o('indID-indID','ZEROS') to create a vector of zeros of that same
 length may also be useful.
 }
 \examples{
-{
+\donttest{
 
 ##EXAMPLE 1
 ##CONVERT PROPORTIONS IN prop.rand TO log(odds) IN logodds.rand
 #ds.make.o("(prop.rand)/(1-prop.rand)","odds.rand")
 #ds.make.o("log(odds.rand)","logodds.rand")
 
-
-
 ##EXAMPLE 2
 ##MISCELLANEOUS ARITHMETIC OPERATORS: ARBITRARY CALCULATION
 ##USE DEFAULT NEW OBJECT NAME
 #ds.make.o("((age.60+bmi.26)*(noise.56-pm10.16))/3.2")
-
-
 
 ##EXAMPLE 3
 ##MISCELLANEOUS OPERATORS WITHIN FUNCTIONS (female.n is binary 1/0 so female.n2 = female.n
@@ -103,7 +95,6 @@ length may also be useful.
 #ds.make.o("(2*female.n)+(log.surv)-(female.n2*2)","output.test.1") 
 #ds.make.o("exp(output.test.1)","output.test")
 }
-
 }
 \author{
 DataSHIELD Development Team

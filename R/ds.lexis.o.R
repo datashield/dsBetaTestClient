@@ -1,4 +1,4 @@
-#' 
+
 #' @title ds.lexis calling lexisDS1, lexisDS2, lexisDS3
 #' @description Takes a dataframe containing survival data and expands it by converting records at
 #' the level of individual subjects (survival time, censoring status, IDs and other variables) into
@@ -17,7 +17,7 @@
 #' and yet will not improve the fit of the model. If the number of failures in one or more time
 #' periods is a given study is less than the specified disclosure filter determining minimum
 #' acceptable cell size in a table (nfilter.tab) then the expanded dataframe is not created in that
-#' study, and a studyside message to this effect is made available in that study via ds.message() 
+#' study, and a studyside message to this effect is made available in that study via ds.message()
 #' @details The function ds.lexis splits the survival interval time of subjects into pre-specified
 #' sub-intervals that are each assumed to encompass a constant base-line hazard which means a
 #' constant instantaneous risk of death). In the expanded dataset a row is included for every
@@ -76,7 +76,7 @@
 #' lexisDS3 simplifies the final output so that the object specified by the \code{expandDF}
 #' argument is the actual dataframe rather than a table within a list.
 #' @param data is a character string. This specifies the name of a dataframe containing the
-#' survival data to be expanded. Often, the dataframe will also hold the original 
+#' survival data to be expanded. Often, the dataframe will also hold the original
 #' total-survival-time and final-censoring variables but the lexis function is deliberately set up
 #' so those can also be specified as coming either from a different data frame or from the root
 #' area of your analysis (i.e. lying outside any dataframe)table that holds the original data, this
@@ -104,7 +104,7 @@
 #' that is allocated from 1:M (where there are M individuals) in whatever order they appear in the
 #' original dataset. It is this ds.lexis sequentially allocated numeric ID vector that is
 #' ultimately combined with the interval period number to produce the expanded unique ID variable
-#' in the expanded data set (e.g. see 77.13 under 'details')   
+#' in the expanded data set (e.g. see 77.13 under 'details')
 #' @param entryCol is a character string denoting the name of the column that holds the entry times
 #' (i.e. start of follow up). Rather than using a total survival time variable to identify the
 #' intervals to which any given individual is exposed, ds.lexis requires an initial entry time and
@@ -127,16 +127,15 @@
 #' variables which may still be useful for plotting survival data once these become available.
 #' @param expandDF is a character string denoting the name of the new dataframe containing the
 #' expanded data set. If you specify a name, that name will be used, but if no name is specified it
-#' will be defaulted to 'name of dataframe specified by data argument' with '_expanded' as a 
+#' will be defaulted to 'name of dataframe specified by data argument' with '_expanded' as a
 #' suffix. If you use the client side function ds.ls() after running ds.lexis the new dataframe you
 #' have created should be listed, and the output of the function advises you to do this. If the
 #' function call fails (e.g. the expanded dataframe does not appear when you run ds.ls() you can
 #' use the command ds.message("messageobj") and depending what has gone wrong, there may be an
 #' explanatory error message that ds.message("messageobj") will reveal. Errors arising directly
 #' from deliberate disclosure traps are explained under details.
-#' @param datasources requires specification of one or more opal objects. As in all client-side
-#' functions, a list of opal object(s) obtained after login to opal servers; these objects also
-#' hold the data assigned to R, as a \code{data frame}, from opal datasources
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+#' argument is not specified the default set of connections will be used: see \link{datashield.connections_default}.
 #' @return The function returns a dataframe which is the expanded version of the input table. The
 #' required dataframe is created on each of the study servers not on the client - which is why you
 #' need to use ds.ls() to see it. If a expandDF argument was specified, this defines the name of
@@ -149,7 +148,7 @@
 #' @seealso \code{ds.glm} for genralized linear models
 #' @seealso \code{ds.gee} for generalized estimating equation models
 #' @export
-#' @examples {
+#' @examples \donttest{
 #' #EXAMPLE 1
 #' #In this example, the data to be expanded are held in a dataframe called 'CM'. The survival time
 #' #intervals are to be 0<t<=2.5; 2.5<t<=5.0, 5.0<t<=7.5, up to the final interval of duration 2.5
@@ -170,7 +169,7 @@
 #' #expanded dataframe. Depending how the arguments of ds.lexis are specified some variables may be
 #' #repeated:
 #' #
-#' #A       B     C   D       E   F     G    H    I      J       K   L    M    N     O 
+#' #A       B     C   D       E   F     G    H    I      J       K   L    M    N     O
 #' #657     657	  1   2.054   1   657  983   0.0  2.054  2.054   1   0    13   1     2.3
 #' #658     658	  1   0.348   0   658  984   0.0  0.348  0.348   0   0    8    1    -2.7
 #' #659     659	  1   2.500   0   659  985   0.0  9.300  9.300   1   0   -21   1    -0.6
@@ -178,21 +177,21 @@
 #' #659.2   659   3   2.500   0   659  985   0.0  9.300  9.300   1   0   -21   1    -0.6
 #' #659.3   659	  4   1.800   1   659  985   0.0  9.300  9.300   1   0   -21   1    -0.6
 #' #
-#' #A = Expanded Unique ID - sequential ID allocated by ds.lexis combined with indicator of 
+#' #A = Expanded Unique ID - sequential ID allocated by ds.lexis combined with indicator of
 #' #interval to which that row corresponds. No indicator = interval 1, .N = N+1th interval (e.g.
 #' #see subject 659).
 #' #B = Sequential ID allocated by ds.lexis - starts from ID 1 in each study
 #' #C = Numbered value for each separate time period allocated by ds.lexis. THIS MUST BE CONVERTED
 #' #    INTO A FACTOR AND THEN USED (IN THAT FACTOR FORM NOT AS A NUMERIC) AS A COVARIATE IN THE
-#' #    ds.glm() CALL THAT FITS THE PIECEWISE EXPONENTIAL REGRESSION MODEL. 
+#' #    ds.glm() CALL THAT FITS THE PIECEWISE EXPONENTIAL REGRESSION MODEL.
 #' #D = Exposure time in corresponding interval (e.g. see subject 659). THIS IS THE SURVIVAL TIME
 #' #    VARIABLE TO BE USED IN THE PIECEWISE EXPONENTIAL REGRESSION MODEL - IT IS CONVERTED TO LOG
 #' #    SURVIVAL TIME (LOG TO BASE e) AND USED AS THE OFFSET IN THE ds.glm() MODEL THAT FITS THE
-#' #    PIECEWISE EXPONENTIAL REGRESSION MODEL. 
+#' #    PIECEWISE EXPONENTIAL REGRESSION MODEL.
 #' #E = Failure/censoring status in corresponding interval (e.g. see subject 659). THIS IS THE
 #' #    CENSORING VARIABLE TO BE USED IN THE PIECEWISE EXPONENTIAL REGRESSION MODEL - IT IS USED AS
 #' #    THE OUTCOME VARIABLE OF THE ds.glm() MODEL THAT FITS THE PIECEWISE EXPONENTIAL REGRESSION
-#' #   MODEL. 
+#' #   MODEL.
 #' #F = Repeat of Sequential ID allocated by ds.lexis.
 #' #G = Original ID allocated by Opal (note not necessarily in same order as Sequential ID).
 #' #H = starttime (if specified) in original data (note gets repeated across all intervals for any
@@ -211,10 +210,10 @@
 #' #    any individual.
 #' #O = Additional variable carried into expanded dataframe. note repeated across all intervals for
 #' #    any individual.
-#' 
+
 #' #EXAMPLE 2
 #' #In this example, the survival time intervals are to be 0<t<=1; 1<t<=2.0, 2.0<t<=5.0, 5.0<t<=11.0,
-#' #then 11.0<t<=maximum survival time in any study (if no survival time exceeds 11, the fifth 
+#' #then 11.0<t<=maximum survival time in any study (if no survival time exceeds 11, the fifth
 #' #interval will not appear in any row). No expandDF is specified so the output dataframe will be
 #' #named 'CM_expanded'.
 #' #ds.lexis.5(data = "CM", intervalWidth = c(1,1,3,6), idCol = "CM$ID",
@@ -223,23 +222,23 @@
 #' }
 #'
 ds.lexis.o<-function(data=NULL, intervalWidth=NULL, idCol=NULL, entryCol=NULL, exitCol=NULL, statusCol=NULL, variables=NULL, expandDF=NULL, datasources=NULL){
-  
-  # if no opal login details are provided look for 'opal' objects in the environment
+
+  # look for DS connections
   if(is.null(datasources)){
-    datasources <- findLoginObjects()
+    datasources <- datashield.connections_find()
   }
-  
+
   # check if user have provided the name of the column that holds the subject ids
   if(is.null(idCol)){
     stop("Please provide the name of the column that holds the subject IDs!", call.=FALSE)
   }
-  
+
   # check if user have provided the name of the column that holds failure information
   if(is.null(statusCol)){
     stop("Please provide the name of the column that holds 'failure' information!", call.=FALSE)
   }
-  
-  # check if user have provided the name of the column that holds exit times 
+
+  # check if user have provided the name of the column that holds exit times
   if(is.null(exitCol)){
     stop("Please provide the name of the column that holds the exit times (i.e. end of follow up time)!", call.=FALSE)
   }
@@ -249,7 +248,7 @@ ds.lexis.o<-function(data=NULL, intervalWidth=NULL, idCol=NULL, entryCol=NULL, e
   if(is.null(intervalWidth)||is.na(intervalWidth)||intervalWidth==0){
     stop("Please provide a (non-zero) single numeric value or vector to identify the survival time intervals", call.=FALSE)
   }
-  
+
   # if no value spcified for output (expanded) data set, then specify a default
   if(is.null(expandDF)){
     expandDF <- paste0(data,"_expanded")
@@ -260,17 +259,17 @@ ds.lexis.o<-function(data=NULL, intervalWidth=NULL, idCol=NULL, entryCol=NULL, e
   calltext1 <- call("lexisDS1.o", exitCol)
 
   maxtime<-datashield.aggregate(datasources, calltext1)
-  
+
   num.studies<-length(datasources)
 
   for(ss in 1:num.studies){
-#  print(maxtime[ss][[1]]$max.time) 
+#  print(maxtime[ss][[1]]$max.time)
 
     if(is.null(maxtime[ss][[1]]$max.time)){
     return(list(maxtime=maxtime))
 	}
-  } 
- 
+  }
+
   nummax<-length(maxtime)
 
   temp1<-rep(NA,nummax)
@@ -290,8 +289,8 @@ intervalWidth.transmit<-paste0(as.character(intervalWidth),collapse=",")
   calltext2 <- call("lexisDS2.o", data, intervalWidth=intervalWidth.transmit, maxmaxtime, idCol, entryCol, exitCol, statusCol, variables)
   	datashield.assign(datasources, "messageobj", calltext2)
 
-	
-	
+
+
   calltext3<- call("lexisDS3.o")
   	datashield.assign(datasources, expandDF, calltext3)
 

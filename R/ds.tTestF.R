@@ -1,8 +1,8 @@
-#' 
+
 #' @title Runs a combined GLM analysis of non-pooled data
 #' @description A function fit generalized linear models
-#' @details It enables a parallelized analysis of individual-level data sitting 
-#' on distinct servers by sending 
+#' @details It enables a parallelized analysis of individual-level data sitting
+#' on distinct servers by sending
 #' @param formula a character, a formula which describes the model to be fitted
 #' @param family a description of the error distribution function to use in the model
 #' @param offset  a character, null or a numeric vector that can be used to specify an a priori
@@ -10,7 +10,7 @@
 #' @param weights  a character, the name of an optional vector of 'prior weights' to be used in the
 #' fitting process. Should be NULL or a numeric vector.
 #' @param data a character, the name of an optional data frame containing the variables in the
-#' \code{formula}. The process stops if a non existing data frame is indicated. 
+#' \code{formula}. The process stops if a non existing data frame is indicated.
 #' @param checks a boolean, if TRUE (default) checks that takes 1-3min are carried out to verify
 #' that the variables in the model are defined (exist) on the server site and that they have the
 #' correct characteristics required to fit a GLM. The default value is FALSE because checks
@@ -23,8 +23,8 @@
 #' @param CI a numeric, the confidence interval.
 #' @param viewIter a boolean, tells whether the results of the intermediate iterations
 #' should be printed on screen or not. Default is FALSE (i.e. only final results are shown).
-#' @param datasources a list of opal object(s) obtained after login to opal servers;
-#' these objects also hold the data assigned to R, as a \code{dataframe}, from opal datasources.
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+#' argument is not specified the default set of connections will be used: see \link{datashield.connections_default}.
 #' @return coefficients a named vector of coefficients
 #' @return residuals the 'working' residuals, that is the residuals in the final
 #' iteration of the IWLS fit.
@@ -33,17 +33,17 @@
 #' @return rank the numeric rank of the fitted linear model.
 #' @return family the \code{family} object used.
 #' @return linear.predictors the linear fit on link scale.
-#' @author Burton PR; Gaye A; LaFlamme P 
+#' @author Burton PR; Gaye A; LaFlamme P
 #' @seealso \link{ds.lexis} for survival analysis using piecewise exponential regression
 #' @seealso \link{ds.gee} for generalized estimating equation models
 #' @export
-#' @examples {
-#' 
+#' @examples \donttest{
+
 #' # # load the file that contains the login details
-#' # data(glmLoginData)
+#' # logindata <- DSLite::setupCNSIMTest("dsBetaTest")
 #' #
 #' # # login and assign all the variables to R
-#' # opals <- datashield.login(logins=glmLoginData, assign=TRUE)
+#' # conns <- datashield.login(logins=logindata, assign=TRUE)
 #' #
 #' # # Example 1: run a GLM without interaction (e.g. diabetes prediction using BMI and HDL levels
 #' # # and GENDER)
@@ -69,19 +69,18 @@
 #' # ds.asNumeric('D$PM_BMI_CATEGORICAL','BMI.123')
 #' # mod <- ds.glm(formula='BMI.123~D$PM_BMI_CONTINUOUS+D$LAB_HDL+D$GENDER', family='poisson')
 #' # mod
-#' # 
+#' #
 #' # # clear the Datashield R sessions and logout
-#' # datashield.logout(opals) 
-#' 
+#' # datashield.logout(conns)
 #' }
 #'
 ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, weights=NULL, checks=FALSE, maxit=15, CI=0.95, viewIter=FALSE, datasources=NULL){
-  
-  # if no opal login details are provided look for 'opal' objects in the environment
+
+  # look for DS connections
   if(is.null(datasources)){
-    datasources <- findLoginObjects()
+    datasources <- datashield.connections_find()
   }
-  
+
   # verify that 'formula' was set
   if(is.null(formula)){
     stop(" Please provide a valid regression formula eg qvar~bvar (qvar continuous, bvar binary), !", call.=FALSE)
@@ -103,12 +102,12 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
   if(is.null(family)){
     stop(" Please provide a valid 'family' argument!", call.=FALSE)
   }
-  
+
   # if the argument 'data' is set, check that the data frame is defined (i.e. exists) on the server site
   if(!(is.null(data))){
     defined <- isDefined(datasources, data)
   }
-  
+
   # beginning of optional checks - the process stops if any of these checks fails #
   if(checks){
     message(" -- Verifying the variables in the model")
@@ -118,7 +117,7 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
     #message("WARNING:'checks' is set to FALSE; variables in the model are not checked and error messages may not be intelligible!")
   }
 
-  # MOVE ITERATION COUNT BEFORE ASSIGNMENT OF beta.vect.next  
+  # MOVE ITERATION COUNT BEFORE ASSIGNMENT OF beta.vect.next
   # Iterations need to be counted. Start off with the count at 0
   # and increment by 1 at each new iteration
   iteration.count <- 0
@@ -132,7 +131,7 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
 
   # IDENTIFY THE CORRECT DIMENSION FOR START BETAs VIA CALLING FIRST COMPONENT OF glmDS
   cally1 <- call('glmDS1', formula, family, data)
-   
+
   study.summary <- datashield.aggregate(datasources, cally1)
   #num.par.glm<-study.summary$study1$dimX[2]
   num.par.glm<-study.summary[[1]][[1]][[2]]
@@ -147,30 +146,30 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
   # Provide arbitrary starting value for deviance to enable subsequent calculation of the change in
   # deviance between iterations
   dev.old <- 9.99e+99
-  
+
   # Convergence state needs to be monitored.
   converge.state <- FALSE
-  
+
   # Define a convergence criterion. This value of epsilon corresponds to that used
   # by default for GLMs in R (see section S3 for details)
   epsilon <- 1.0e-08
-  
+
   f <- NULL
-  
+
   while(!converge.state && iteration.count < maxit){
     iteration.count<-iteration.count+1
-    
+
     message("Iteration ", iteration.count, "...")
-   
+
     # NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
     cally2 <- call('tTestFDS2', formula, family, beta.vect=beta.vect.temp, offset, weights, data)
 
     study.summary <- datashield.aggregate(datasources, cally2)
-  
+
     .select <- function(l, field){
       lapply(l, function(obj) {obj[[field]]})
     }
-    
+
     info.matrix.total <- Reduce(f="+", .select(study.summary, 'info.matrix'))
     score.vect.total <- Reduce(f="+", .select(study.summary, 'score.vect'))
     dev.total <- Reduce(f="+", .select(study.summary, 'dev'))
@@ -179,7 +178,7 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
     Ntotal.total <- Reduce(f="+", .select(study.summary, 'Ntotal'))
     Nmissing.qvar.total <- Reduce(f="+", .select(study.summary, 'Nmissing.qvar'))
     Nmissing.bvar.total <- Reduce(f="+", .select(study.summary, 'Nmissing.bvar'))
-    
+
     message("CURRENT DEVIANCE:      ", dev.total)
 
     # If formula is bad, formulatest=1 so sum >=1
@@ -196,13 +195,13 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
       # Save family
       f <- study.summary[[1]]$family
     }
-    
+
     # Create variance covariance matrix as inverse of information matrix
     variance.covariance.matrix.total <- solve(info.matrix.total)
-    
+
     # Create beta vector update terms
     beta.update.vect <- variance.covariance.matrix.total %*% score.vect.total
-    
+
     # Add update terms to current beta vector to obtain new beta vector for next iteration
     if(iteration.count==1){
       beta.vect.next <- rep(0,length(beta.update.vect))
@@ -215,7 +214,7 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
     converge.value <- abs(dev.total-dev.old)/(abs(dev.total)+0.1)
     if(converge.value<=epsilon)converge.state <- TRUE
     if(converge.value>epsilon)dev.old <- dev.total
-    
+
     if(viewIter){
       # For ALL iterations summarise model state after current iteration
       message("SUMMARY OF MODEL STATE after iteration ", iteration.count)
@@ -241,7 +240,7 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
     message(paste(capture.output(score.vect.total), collapse="\n"))
     message("\nCurrent deviance: ", dev.total, "\n")
   }
-  
+
   # If convergence has been obtained, declare final (maximum likelihood) beta vector,
   # and calculate the corresponding standard errors, z scores and p values
   # (the latter two to be consistent with the output of a standard GLM analysis)
@@ -251,12 +250,12 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
   if(converge.state){
     family.identified <- 0
     beta.vect.final <- beta.vect.next
-    
+
     scale.par <- 1
     if(f$family=='gaussian'){
       scale.par <- dev.total / (nsubs.total-length(beta.vect.next))
     }
-    
+
     family.identified <- 1
     se.vect.final <- sqrt(diag(variance.covariance.matrix.total)) * sqrt(scale.par)
     z.vect.final <- beta.vect.final/se.vect.final
@@ -264,7 +263,7 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
     parameter.names <- names(score.vect.total[,1])
     model.parameters <- cbind(beta.vect.final,se.vect.final,z.vect.final,pval.vect.final)
     dimnames(model.parameters) <- list(parameter.names,c("Estimate","Std. Error","z-value","p-value"))
- 
+
     if(family=="gaussian"){
       se.vect.final <- sqrt(diag(variance.covariance.matrix.total)) * sqrt(scale.par)
       t.vect.final <- beta.vect.final/se.vect.final
@@ -274,13 +273,13 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
       model.parameters <- cbind(beta.vect.final,se.vect.final,z.vect.final,pval.vect.final)
       dimnames(model.parameters)<-list(parameter.names,c("Estimate","Std. Error","t-value","p-value"))
     }
-   
+
     if(CI > 0){
       ci.mult <- qnorm(1-(1-CI)/2)
       low.ci.lp <- model.parameters[,1]-ci.mult*model.parameters[,2]
       hi.ci.lp <- model.parameters[,1]+ci.mult*model.parameters[,2]
       estimate.lp <- model.parameters[,1]
-      
+
       if(family=="gaussian"){
         ci.mult <- qt((1-(1-CI)/2),df.t)
         low.ci.lp <- model.parameters[,1]-ci.mult*model.parameters[,2]
@@ -294,7 +293,7 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
 	    ci.mat <- cbind(low.ci.lp,hi.ci.lp)
 	    dimnames(ci.mat) <- list(NULL,c(name1,name2))
       }
-      
+
       if(family=="binomial"){
         family.identified  <-  1
         num.parms <- length(low.ci.lp)
@@ -310,11 +309,11 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
           name3 <- paste0("P_OR")
           name4 <- paste0("low",CI,"CI.P_OR")
           name5 <- paste0("high",CI,"CI.P_OR")
-        }       
+        }
         ci.mat <- cbind(low.ci.lp,hi.ci.lp,estimate.natural,low.ci.natural,hi.ci.natural)
-        dimnames(ci.mat) <- list(NULL,c(name1,name2,name3,name4,name5))  
+        dimnames(ci.mat) <- list(NULL,c(name1,name2,name3,name4,name5))
       }
-      
+
       if(family=="poisson"){
         family.identified <- 1
         num.parms <- length(low.ci.lp)
@@ -327,9 +326,9 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
         name4 <- paste0("low",CI,"CI.EXP")
         name5 <- paste0("high",CI,"CI.EXP")
         ci.mat <- cbind(low.ci.lp,hi.ci.lp,estimate.natural,low.ci.natural,hi.ci.natural)
-        dimnames(ci.mat) <- list(NULL,c(name1,name2,name3,name4,name5))        
+        dimnames(ci.mat) <- list(NULL,c(name1,name2,name3,name4,name5))
       }
-      
+
       if(family.identified==0){
         estimate.natural <- estimate.lp
         low.ci.natural <- low.ci.lp
@@ -337,11 +336,11 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
         name1 <- paste0("low",CI,"CI")
         name2 <- paste0("high",CI,"CI")
         ci.mat <- cbind(low.ci.lp,hi.ci.lp)
-        dimnames(ci.mat) <- list(NULL,c(name1,name2))   
+        dimnames(ci.mat) <- list(NULL,c(name1,name2))
       }
-      
+
     }
-    
+
     model.parameters <- cbind(model.parameters,ci.mat)
 
     # tTestF summary
@@ -392,9 +391,9 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
       			iter=iteration.count,
 				output.information="SEE TOP OF OUTPUT FOR INFORMATION ON MISSING DATA"
 				)
-    
+
     class(glmds) <- 'glmds'
-    
+
     # return(glmds)
 
     # Main return is tTestF object
@@ -411,5 +410,5 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
     warning(paste("Did not converge after", maxit, "iterations. Increase maxit parameter as necessary."))
     return(NULL)
   }
-  
+
 }

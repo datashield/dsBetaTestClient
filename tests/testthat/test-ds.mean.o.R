@@ -15,10 +15,9 @@
 
 context("dsBetaTestClient::ds.mean.o")
 
-options(opal.server1="sim1", opal.server2="sim2", opal.server3="sim3")
-options(opal.table1="CNSIM.CNSIM1", opal.table2="CNSIM.CNSIM2", opal.table3="CNSIM.CNSIM3")
+logindata <- DSLite::setupCNSIMTest("dsBetaTest", env = environment())
 options(datashield.variables=list("LAB_TSC"))
-source("setup.R")
+conns <- datashield.login(logins=logindata, assign=TRUE, variables=getOption("datashield.variables", NULL))
 
 #
 # Tests
@@ -42,7 +41,7 @@ test_that("mean values [combine] loose", {
 
 context("dsBetaTestClient::ds.mean.o(type=split)")
 test_that("mean values [split]", {
-    stat.mean <- ds.mean.o(datasources=opals, x='D$LAB_TSC', type='split')
+    stat.mean <- ds.mean.o(datasources=conns, x='D$LAB_TSC', type='split')
 
     expect_false(is.na(stat.mean$Mean.by.Study[1]))
     expect_equal(stat.mean$Mean.by.Study[1], 5.87211344770338, tolerance = .000000000000001)
@@ -65,6 +64,6 @@ test_that("mean_erros", {
 # Tear down
 #
 
-source("teardown.R")
+datashield.logout(conns)
 
 context("dsBetaTestClient::ds.mean.o done")

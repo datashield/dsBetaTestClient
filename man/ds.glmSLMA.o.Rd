@@ -73,7 +73,7 @@ in a timely manner}
 
 \item{offset}{A character string specifying the name of a variable to be used as
 an offset (effectively
-a component of the glm which has a known coefficient a-priori and so does not need to be 
+a component of the glm which has a known coefficient a-priori and so does not need to be
 estimated by the model). As an example, an offset is needed to fit a piecewise
 exponential regression model. Unlike the standard glm() function in R, ds.glm()
 only allows an offset
@@ -99,14 +99,14 @@ restricted maximum likelihood (REML), or fixed effects meta-analysis (FE).}
 \item{dataName}{A character string specifying the name of an (optional) dataframe that contains
 all of the variables in the glm formula. This avoids you having to specify the name of the
 dataframe in front of each covariate in the formula e.g. if the dataframe is
-called 'DataFrame' you 
+called 'DataFrame' you
 avoid having to write: "DataFrame$y~DataFrame$a+DataFrame$b+DataFrame$c+DataFrame$d"
 Processing stops if a non existing data frame is indicated.}
 
 \item{checks}{This argument is a boolean. If TRUE ds.glm then undertakes a series
 of checks of
 the structural integrity of the model that can take several minutes. Specifically
-it verifies that the 
+it verifies that the
 variables in the model are all defined (exist) on the server site at every study
 and that they have the correct characteristics required to fit a GLM. The default
 value is FALSE
@@ -125,18 +125,14 @@ to be alerted
 much more quickly than this if there is a delay in convergence, or you may wish to
 allow MORE iterations.}
 
-\item{datasources}{specifies the particular opal object(s) to use, if it is not specified
-the default set of opals will be used. The default opals are always called default.opals.
-This parameter is set without inverted commas: e.g. datasources=opals.em or datasources=default.opals
-If you wish to specify the second opal server in a set of three, the parameter is specified:
-e.g. datasources=opals.em[2]. If you wish to specify the first and third opal servers in a set specify:
-e.g. datasources=opals.em[2,3]}
+\item{datasources}{a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+the default set of connections will be used: see \link{datashield.connections_default}.}
 }
 \value{
 many of the elements of the output list returned by ds.glmSLMA.o from
-each study separately are 
+each study separately are
 equivalent to those from glm() in native R with potentially disclosive elements
-such as individual-level residuals and linear predictors blocked. 
+such as individual-level residuals and linear predictors blocked.
 The return results from each study appear first in the return list with one
 block of results from each study in the order they appear in datasources.
 As regards the elements within each study the most important
@@ -213,7 +209,7 @@ estimates for coefficients from each study. In combination with the coefficients
 meta-analysis (SLMA) package such as metafor to generate estimates pooled via SLMA
 
 SLMA.pooled.estimates:- a matrix containing pooled estimates for each
-regression coefficient across all studies with pooling under SLMA via 
+regression coefficient across all studies with pooling under SLMA via
 random effects meta-analysis under maximum likelihood (ML), restricted maximum
 likelihood (REML) or via fixed effects meta-analysis (FE)
 }
@@ -221,10 +217,10 @@ likelihood (REML) or via fixed effects meta-analysis (FE)
 Fits a generalized linear model (glm) on data from a single or multiple sources
 }
 \details{
-Fits a glm on data from a single source or from multiple sources. In the latter case 
+Fits a glm on data from a single source or from multiple sources. In the latter case
 (when using ds.glmSLMA.o), the glm is fitted to convergence in each data source and the
 estimates and standard errors
-returned from each study separately. When these are then pooled using a function such as 
+returned from each study separately. When these are then pooled using a function such as
 ds.metafor, this is a form of study level meta-analysis (SLMA). This contrasts with the setting
 when ds.glm is used to fit a glm to multiple sources. In that case the update at each
 iteration uses data from all sources simultaneously and returns the updated parameter

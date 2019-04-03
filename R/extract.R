@@ -1,4 +1,4 @@
-#' 
+
 #' @title Splits character by '$' and returns the single characters
 #' @description This is an internal function.
 #' @details Not required

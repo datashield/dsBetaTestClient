@@ -1,4 +1,4 @@
-#' 
+
 #' @title runs a t-test for two continuous variables
 #' @description This is an internal function.
 #' @details internal function
@@ -75,44 +75,44 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
     if (!is.null(y)) {
       if (paired) {
         cally = paste0("complete.cases(",  x, ",", y, ")")
-        opal::datashield.assign(datasources, 'pair.compl.obs', as.symbol(cally))
+        datashield.assign(datasources, 'pair.compl.obs', as.symbol(cally))
         cally = paste0("subsetDS('",  x, "', pair.compl.obs)")
-        opal::datashield.assign(datasources, 'xok', as.symbol(cally))
+        datashield.assign(datasources, 'xok', as.symbol(cally))
         cally = paste0("subsetDS('",  y, "', pair.compl.obs)")
-        opal::datashield.assign(datasources, 'yok', as.symbol(cally))
+        datashield.assign(datasources, 'yok', as.symbol(cally))
       } else {
         cally = paste0("complete.cases(",  x, ")")
-        opal::datashield.assign(datasources, 'not.na.x', as.symbol(cally))
+        datashield.assign(datasources, 'not.na.x', as.symbol(cally))
         cally = paste0("subsetDS('",  x, "',not.na.x)")
-        opal::datashield.assign(datasources, 'xok', as.symbol(cally))
+        datashield.assign(datasources, 'xok', as.symbol(cally))
         
         cally = paste0("complete.cases(",  y, ")")
-        opal::datashield.assign(datasources, 'not.na.y', as.symbol(cally))
+        datashield.assign(datasources, 'not.na.y', as.symbol(cally))
         cally = paste0("subsetDS('",  y, "',not.na.y)")
-        opal::datashield.assign(datasources, 'yok', as.symbol(cally))
+        datashield.assign(datasources, 'yok', as.symbol(cally))
       }
     } else {
       if (paired) 
         stop("'y' is missing for paired test")
       cally = paste0("complete.cases(",  x, ")")
-      opal::datashield.assign(datasources, 'not.na.x', as.symbol(cally))
+      datashield.assign(datasources, 'not.na.x', as.symbol(cally))
       cally = paste0("subsetDS('",  x, "', not.na.x)")
-      opal::datashield.assign(datasources, 'xok', as.symbol(cally))
+      datashield.assign(datasources, 'xok', as.symbol(cally))
       cally = paste0("as.null(",  x, ")")
-      opal::datashield.assign(datasources, 'yok', as.symbol(cally)) # does not matter that as.null(x) since we just want to set y to NULL
+      datashield.assign(datasources, 'yok', as.symbol(cally)) # does not matter that as.null(x) since we just want to set y to NULL
     }    
     
     if (paired) {
       cally = paste0("(yok)","*(",-1,")")
-      opal::datashield.assign(datasources, 'minus_y', as.symbol(cally))
-      # opal::datashield.assign(datasources, 'dummy', quote(cbind(xok, minus_y)))
-      opal::datashield.assign(datasources, 'xok', as.symbol("xok+minus_y"))
-      opal::datashield.assign(datasources, 'yok', as.symbol("as.null(yok)"))
+      datashield.assign(datasources, 'minus_y', as.symbol(cally))
+      # datashield.assign(datasources, 'dummy', quote(cbind(xok, minus_y)))
+      datashield.assign(datasources, 'xok', as.symbol("xok+minus_y"))
+      datashield.assign(datasources, 'yok', as.symbol("as.null(yok)"))
     }
     
-    length.local.x = opal::datashield.aggregate(datasources, as.symbol("NROW(xok)"))
-    mean.local.x = opal::datashield.aggregate(datasources, as.symbol("meanDS(xok)"))
-    var.local.x = opal::datashield.aggregate(datasources, as.symbol("varDS(xok)"))
+    length.local.x = datashield.aggregate(datasources, as.symbol("NROW(xok)"))
+    mean.local.x = datashield.aggregate(datasources, as.symbol("meanDS(xok)"))
+    var.local.x = datashield.aggregate(datasources, as.symbol("varDS(xok)"))
     
     length.total.x = 0
     sum.weighted.x = 0
@@ -145,7 +145,7 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
     mean.global.products.x = length.total.x*(mean.global.x%x%t(mean.global.x))
     var.global.x = 1/(length.total.x-1)*(dummy.sum.x-mean.global.products.x)
     
-    null.y = opal::datashield.aggregate(datasources, as.symbol("is.null(yok)"))
+    null.y = datashield.aggregate(datasources, as.symbol("is.null(yok)"))
     null.y = unlist(null.y)
     
     if (all(null.y)) {
@@ -159,7 +159,7 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
       method <- ifelse(paired, "Paired t-test", "One Sample t-test")
       names(estimate) <- ifelse(paired, "mean of the differences", paste("mean of", variables[1], sep=""))
     } else {
-      length.local.y = opal::datashield.aggregate(datasources, as.symbol("NROW(yok)"))
+      length.local.y = datashield.aggregate(datasources, as.symbol("NROW(yok)"))
       
       length.total.y = 0
       sum.weighted.y = 0
@@ -175,8 +175,8 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
       if (var.equal && length.total.x + length.total.y < 3) 
         stop("not enough observations")
       
-      mean.local.y = opal::datashield.aggregate(datasources, as.symbol("meanDS(yok)"))
-      var.local.y = opal::datashield.aggregate(datasources, as.symbol("varDS(yok)"))
+      mean.local.y = datashield.aggregate(datasources, as.symbol("meanDS(yok)"))
+      var.local.y = datashield.aggregate(datasources, as.symbol("varDS(yok)"))
       method <- paste(if (!var.equal) 
         "Welch", "Two Sample t-test")
       
@@ -268,7 +268,7 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
   }else{
     if(type == "split"){
       cally <- paste0("t.test(", x, ",", y, ",alternative='",alternative, "',mu=",mu, ",paired=",paired, ",var.equal=",var.equal, ",conf.level=",conf.level,")")
-      results <- opal::datashield.aggregate(datasources, as.symbol(cally))
+      results <- datashield.aggregate(datasources, as.symbol(cally))
       return(results)
     }else{
       stop('Function argument "type" has to be either "combine" or "split"')

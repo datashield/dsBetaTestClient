@@ -1,4 +1,4 @@
-#' 
+
 #' @title Uses glm to compute means of numeric vector across factor vector
 #' @description This is an internal function.
 #' @details internal function
@@ -30,7 +30,7 @@ tTestHelper2 <- function(formula, CI, datasources) {
   }else{
     # the covariate must have only two categories (as for t.test in R), so stop and throw a message otherwise    
     cally <- paste0("levels(", b, ")")
-    levels_all <- opal::datashield.aggregate(datasources, as.symbol(cally))
+    levels_all <- datashield.aggregate(datasources, as.symbol(cally))
     classes <- unique(unlist(levels_all))
     if(length(classes) != 2){
       stop(paste0(" ", b, " must two and only two categories!"), call.=FALSE)
@@ -55,7 +55,7 @@ tTestHelper2 <- function(formula, CI, datasources) {
   # identify the correct dimension for start beta coeffs by calling the 1st component of glmDS
   cally1 <- call('glmDS1', formula, family, beta.vect=beta.vect.temp, NULL)
   
-  study.summary <- opal::datashield.aggregate(datasources, cally1)
+  study.summary <- datashield.aggregate(datasources, cally1)
   num.par.glm <- study.summary[[1]][[1]][[2]]
   
   beta.vect.next <- rep(0, num.par.glm)
@@ -82,7 +82,7 @@ tTestHelper2 <- function(formula, CI, datasources) {
     # now call second component of glmDS to generate score vectors and informations matrices
     cally2 <- call('glmDS2', formula, family, beta.vect=beta.vect.temp, NULL, NULL, NULL)
     
-    study.summary <- opal::datashield.aggregate(datasources, cally2)
+    study.summary <- datashield.aggregate(datasources, cally2)
     
     
     .select <- function(l, field) {

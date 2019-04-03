@@ -6,7 +6,7 @@
 #' @keywords internal
 #' @return a data frame
 #' @author Gaye A
-#' 
+
 rowPercent <- function(dataframe){
   dt <- dataframe
   lastrow <- dim(dataframe)[1]

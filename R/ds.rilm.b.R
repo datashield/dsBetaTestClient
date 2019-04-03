@@ -1,4 +1,4 @@
-#' 
+
 #' @title Random Intercept Linear Model (RILM)
 #' @description Runs a Random Intercept Linear Model on horizontally-partinioned data
 #' @details  see description
@@ -9,7 +9,7 @@
 #' @return regression outcome
 #' @author Avraam D; Jones EM; van den Heuvel ER
 #' @export
-#' 
+
 ds.rilm.b <- function(..., y=NULL, datasources=NULL){
 
 ##############################
@@ -64,7 +64,7 @@ is.whole <- function(x){
 	}
 	
 	if(is.null(datasources)){
-		datasources <- findLoginObjects()
+		datasources <- datashield.connections_find()
 	}
 
 	# Find the number of centers.

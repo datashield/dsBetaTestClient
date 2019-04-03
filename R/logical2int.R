@@ -1,4 +1,4 @@
-#' 
+
 #' @title turns a logical operator into an integer
 #' @description This is an internal function.
 #' @details This function is called to turn a logical oprator given as a 

@@ -1,10 +1,10 @@
-#' 
+
 #' @title Computes the statistical mean of a given vector
 #' @description This function is similar to the R function \code{mean}.
 #' @details It is a wrapper for the server side function.
 #' @param x a character, typically the name of a numerical vector
-#' @param type a character which represents the type of analysis to carry out. 
-#' If \code{type} is set to 'combine', 'combined', 'combines' or 'c', a global mean is calculated 
+#' @param type a character which represents the type of analysis to carry out.
+#' If \code{type} is set to 'combine', 'combined', 'combines' or 'c', a global mean is calculated
 #' if \code{type} is set to 'split', 'splits' or 's', the mean is calculated separately for each study.
 #' if \code{type} is set to 'both' or 'b', both sets of outputs are produced
 #' @param checks a Boolean indicator of whether to undertake optional checks of model
@@ -14,57 +14,50 @@
 #' generated values of the mean and of the number of valid (non-missing) observations into
 #' the R environments at each of the data servers. Will save study-specific means and Nvalids
 #' as well as the global equivalents across all studies combined. Once the estimated means and Nvalids
-#' are written into the server-side R environments, they can be used directly to centralize 
+#' are written into the server-side R environments, they can be used directly to centralize
 #' the variable of interest around its global mean or its study-specific means. Finally,
 #' the isDefined internal function checks whether the key variables have been created.
-#' @param datasources specifies the particular opal object(s) to use, if it is not specified
-#' the default set of opals will be used. The default opals are always called default.opals.
-#' This parameter is set without inverted commas: e.g. datasources=opals.em or datasources=default.opals
-#' If you wish to specify the second opal server in a set of three, the parameter is specified:
-#' e.g. datasources=opals.em[2]. If you wish to specify the first and third opal servers in a set specify:
-#' e.g. datasources=opals.em[2,3]
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+#' the default set of connections will be used: see \link{datashield.connections_default}.
 #' @return a list including: Mean.by.Study = estimated mean in each study separately (if type = split or both), with Nmissing
 #' (number of missing observations), Nvalid (number of valid observations), Ntotal (sum of missing and valid observations)
 #' also reported separately for each study; Global.Mean = Mean, Nmissing, Nvalid, Ntotal across all studies combined
-#' (if type = combine or both); Nstudies = number of studies being analysed; ValidityMessage indicates whether 
+#' (if type = combine or both); Nstudies = number of studies being analysed; ValidityMessage indicates whether
 #' a full analysis was possible or whether one or more studies had fewer valid observations than the nfilter
 #' threshold for the minimum cell size in a contingency table. If save.mean.Nvalid=TRUE, ds.mean.o writes
 #' the objects "Nvalid.all.studies", "Nvalid.study.specific", "mean.all.studies", and "mean.study.specific"
-#' to the serverside on each server 
+#' to the serverside on each server
 #' @author Burton PR; Gaye A; Isaeva I;
 #' @seealso \code{ds.quantileMean} to compute quantiles.
 #' @seealso \code{ds.summary} to generate the summary of a variable.
 #' @export
-#' @examples {
-#' 
-#' #  # load that contains the login details
-#' #  data(logindata)
-#' #  library(opal)
+#' @examples \donttest{
+#' # # load that contains the login details
+#' # logindata <- DSLite::setupCNSIMTest("dsBetaTest")
 #' #
-#' #  # login and assign specific variable(s)
-#' #  myvar <- list('LAB_TSC')
-#' #  opals <- datashield.login(logins=logindata,assign=TRUE,variables=myvar)
+#' # # login and assign specific variable(s)
+#' # myvar <- list('LAB_TSC')
+#' # conns <- datashield.login(logins=logindata,assign=TRUE,variables=myvar)
 #' #
-#' #  # Example 1: compute the pooled statistical mean of the variable 'LAB_TSC' - default behaviour
-#' #  ds.mean(x='D$LAB_TSC')
+#' # # Example 1: compute the pooled statistical mean of the variable 'LAB_TSC' - default behaviour
+#' # ds.mean.o(x='D$LAB_TSC')
 #' #
-#' #  # Example 2: compute the statistical mean of each study separately
-#' #  ds.mean(x='D$LAB_TSC', type='split')
+#' # # Example 2: compute the statistical mean of each study separately
+#' # ds.mean.o(x='D$LAB_TSC', type='split')
 #' #
-#' #  # clear the Datashield R sessions and logout
-#' #  datashield.logout(opals)
-#' 
+#' # # clear the Datashield R sessions and logout
+#' # datashield.logout(conns)
 #' }
 #'
 ds.mean.o <- function(x=NULL, type='split', checks=FALSE, save.mean.Nvalid=FALSE, datasources=NULL){
 
 #####################################################################################
 #MODULE 1: IDENTIFY DEFAULT OPALS  													#
-  # if no opal login details are provided look for 'opal' objects in the environment#
+  # look for DS connections#
   if(is.null(datasources)){															#
-    datasources <- findLoginObjects()												#
-  }																					#						
-#####################################################################################  
+    datasources <- datashield.connections_find()												#
+  }																					#
+#####################################################################################
 
 #####################################################################################
 #MODULE 2: SET UP KEY VARIABLES ALLOWING FOR DIFFERENT INPUT FORMATS                #
@@ -78,7 +71,7 @@ ds.mean.o <- function(x=NULL, type='split', checks=FALSE, save.mean.Nvalid=FALSE
   varname <- xnames$elements                                                        #
   obj2lookfor <- xnames$holders                                                     #
 #####################################################################################
- 
+
 ###############################################################################################
 #MODULE 3: GENERIC OPTIONAL CHECKS TO ENSURE CONSISTENT STRUCTURE OF KEY VARIABLES            #
 #IN DIFFERENT SOURCES                                                                         #
@@ -113,17 +106,17 @@ if(type == 'both' | type == 'b' ) type <- 'both'                                
 #MODIFY FUNCTION CODE TO DEAL WITH ALL THREE TYPES                                                #
 ###################################################################################################
 
-  
+
   cally <- paste0("meanDS.o(", x, ")")
   ss.obj <- datashield.aggregate(datasources, as.symbol(cally))
-  
+
   Nstudies <- length(datasources)
     ss.mat <- matrix(as.numeric(matrix(unlist(ss.obj),nrow=Nstudies,byrow=TRUE)[,1:4]),nrow=Nstudies)
     dimnames(ss.mat) <- c(list(names(ss.obj),names(ss.obj[[1]])[1:4]))
 
 	ValidityMessage.mat <- matrix(matrix(unlist(ss.obj),nrow=Nstudies,byrow=TRUE)[,5],nrow=Nstudies)
 	dimnames(ValidityMessage.mat) <- c(list(names(ss.obj),names(ss.obj[[1]])[5]))
-	
+
 	ss.mat.combined <- t(matrix(ss.mat[1,]))
 
 	ss.mat.combined[1,1] <- (t(matrix(ss.mat[,3]))%*%ss.mat[,1])/sum(ss.mat[,3])
@@ -168,7 +161,7 @@ print("Data object <mean.all.studies> created successfully in all sources") #
 }                                                                           #
 #############################################################################
 }
-  
+
 #PRIMARY FUNCTION OUTPUT SUMMARISE RESULTS FROM
 #AGGREGATE FUNCTION AND RETURN TO CLIENT-SIDE
   if (type=='split'){
