@@ -25,6 +25,8 @@ glmChecks <- function(formula, data, offset, weights, datasources){
   
   # replace the symbols '~', '+' and '*' by a separator
   formula <- gsub( " ", "", formula, fixed=TRUE)
+  formula <- gsub("(1|", "", formula, fixed=TRUE)
+  formula <- gsub(")", "", formula, fixed=TRUE)
   formula <- gsub( "~", "|", formula, fixed=TRUE)
   formula <- gsub( "+", "|", formula, fixed=TRUE)
   formula <- gsub( "*", "|", formula, fixed=TRUE)
