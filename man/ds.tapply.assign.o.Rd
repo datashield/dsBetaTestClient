@@ -5,21 +5,29 @@
 \title{ds.tapply.assign.o calling tapplyDS.assign.o}
 \usage{
 ds.tapply.assign.o(X.name = NULL, INDEX.names = NULL,
-  FUN.name = NULL, newobj = "newObj", datasources = NULL)
+  FUN.name = NULL, newobj = "tapply.out", datasources = NULL)
 }
 \arguments{
 \item{X.name, }{the name of the variable to be summarized. The user must set the name as a
-character string in inverted commas}
+character string in inverted commas. For example: X.name="var.name"}
 
-\item{INDEX.names, }{the name of a single factor or a list of factors to index the variable 
-to be summarized. The user must specify this argument in inverted commas.}
+\item{INDEX.names, }{the name of a single factor or a vector of names of factors to
+index the variable to be summarized. Each name must be specified in inverted commas.
+For example: INDEX.names="factor.name" or
+INDEX.names=c("factor1.name", "factor2.name", "factor3.name"). The native R tapply function
+can coerce non-factor vectors into factors. However, this does not always work when
+using the DataSHIELD ds.tapply.o/ds.tapply.assign.o functions so if you are concerned that
+an indexing vector is not being treated correctly as a factor,
+please first declare it explicitly as a factor using {ds.asFactor.o}}
 
-\item{FUN.name, }{the name of a valid function to be applied. The present version of this
-function allows the user to choose one of the four main summarizing functions that are 'mean',
-'sd', 'sum', or 'quantile'.}
+\item{FUN.name, }{the name of one of the allowable summarizing functions to be applied
+specified in inverted commas. The present version of the
+function allows the user to choose one of five summarizing functions. These are
+"N" (or "length"), "mean","sd", "sum", or "quantile". For more information see Details.}
 
-\item{newobj}{This a character string providing a name for the output
-random number vector which defaults to 'newObject' if no name is specified.}
+\item{newobj}{A character string specifying the name of the vector to which the output
+vector is to be written. If no <newobj> argument is specified, the output vector defaults
+to "tapply.out".}
 
 \item{datasources}{specifies the particular opal object(s) to use. If the <datasources>
 argument is not specified the default set of opals will be used. The default opals
@@ -32,20 +40,45 @@ If you wish to specify the first and third opal servers in a set you specify:
 e.g. datasources=opals.em[c(1,3)]}
 }
 \value{
-the object specified by the newobj argument (or default name newObject) is written to the
-serverside and a validity message indicating whether the newobject has been correctly
-created at each source is returned to the client. If it has not been correctly created the
-return object return.info details in which source the problem exists and whether: (a) the object
-exists at all; (b) it has meaningful content indicated by a valid class.
+an array of the summarized values created by the tapplyDS.assign.o function.
+This array is written as a newobj onto the serverside. It has the same number of
+dimensions as INDEX.
 }
 \description{
-Apply a Function to summarize a variable over one or more factors
+Apply one of a selected range of functions to summarize an
+outcome variable over one or more indexing factors and write the resultant
+summary as an object on the serverside
 }
 \details{
-An assign function that uses the native R function tapply() to apply a function to each
-cell of a ragged array, that is to each (non-empty) group of values given by a unique
-combination of the levels of certain factors. For example, the function can be used to
-calculate the mean of BMI over males and females.
+A clientside function calling an assign serverside function that uses
+the native R function tapply() to apply one of
+a selected range of functions to each cell of a ragged array, that is to each (non-empty)
+group of values given by each unique combination of a series of indexing factors. The native R
+{tapply} function is very flexible and the range of allowable summarizing functions
+is much more restrictive for the DataSHIELD ds.tapply.o function. This is to protect
+against disclosure risk. At present the allowable functions are: N or length (the number
+of (non-missing) observations in the group defined by each combination of indexing
+factors; mean; SD (standard deviation); sum; quantile (with quantile probabilities set at
+c(0.05,0.1,0.2,0.25,0.3,0.33,0.4,0.5,0.6,0.67,0.7,0.75,0.8,0.9,0.95). Should other functions
+be required in the future then, provided they are non-disclosive, the DataSHIELD development
+team could work on them if requested. As an assign function {tapplyDS.assign.o}
+writes the summarized values to the serverside. Because unlike the aggregate function
+{tapplyDS.o}, {tapply.assign.o} returns no results to the clientside, it is fundamentally
+non-disclosive and the number of observations in each unique indexing group does
+not need to be evaluated against nfilter.tab (the minimum allowable non-zero count
+in a contingency table). This means that tapplyDS.assign.o can be used, for example, 
+to break a dataset down into a small number of values for each individual and then to flag up
+which individuals have got at least one positive value for a binary outcome variable.
+This will almost inevitably generate some indexing groups smaller than nfilter.tab but
+as the results are simply written as newobj to the serverside rather than returned to
+the clientside there is no overt disclosure risk. The native R
+tapply function has optional arguments such as na.rm=TRUE for FUN = mean which will
+exclude any NAs from the outcome variable to be summarized. However, in order to keep
+DataSHIELD's {ds.tapply.o} and {ds.tapply.assign.o} functions straightforward, the
+serverside functions {tapplyDS.o} and {tapplyDS.assign.o} both start by stripping
+any observations which have missing (NA) values in either the outcome variable or in
+any one of the indexing factors. In consequence, the resultant analyses are always based
+on complete.cases.
 }
 \author{
 Paul Burton, Demetris Avraam for DataSHIELD Development Team

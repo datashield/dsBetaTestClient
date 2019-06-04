@@ -170,7 +170,7 @@ lexisDS3 simplifies the final output so that the object specified by the \code{e
 argument is the actual dataframe rather than a table within a list.
 }
 \examples{
-{
+\dontrun{
 #EXAMPLE 1
 #In this example, the data to be expanded are held in a dataframe called 'CM'. The survival time
 #intervals are to be 0<t<=2.5; 2.5<t<=5.0, 5.0<t<=7.5, up to the final interval of duration 2.5

@@ -167,7 +167,7 @@ cat("NO SEED SET IN STUDY",study.id,"\n\n")
 
 }
   calltext <- paste0("setSeedDS.o(", seed.as.text, ")")
-  ssDS.obj[[study.id]] <- datashield.aggregate(datasources[study.id], as.symbol(calltext))
+  ssDS.obj[[study.id]] <- opal::datashield.aggregate(datasources[study.id], as.symbol(calltext))
 } 
 cat("\n\n")
 
@@ -193,7 +193,7 @@ toAssign<-paste0("rPoisDS.o(",samp.size[k],",",lambda, ")")
 
   # now do the business
  
-  datashield.assign(datasources[k], newobj, as.symbol(toAssign))
+  opal::datashield.assign(datasources[k], newobj, as.symbol(toAssign))
  } 
 
 #############################################################################################################
@@ -206,7 +206,7 @@ test.obj.name<-newobj																					 	#
 # CALL SEVERSIDE FUNCTION                                                                                	#
 calltext <- call("testObjExistsDS.o", test.obj.name)													 	#
 																											#
-object.info<-datashield.aggregate(datasources, calltext)												 	#
+object.info<-opal::datashield.aggregate(datasources, calltext)												 	#
 																											#
 # CHECK IN EACH SOURCE WHETHER OBJECT NAME EXISTS														 	#
 # AND WHETHER OBJECT PHYSICALLY EXISTS WITH A NON-NULL CLASS											 	#
@@ -248,7 +248,7 @@ if(obj.name.exists.in.all.sources && obj.non.null.in.all.sources){										 	#
 	}																										#
 																											#
 	calltext <- call("messageDS.o", test.obj.name)															#
-    studyside.message<-datashield.aggregate(datasources, calltext)											#
+    studyside.message<-opal::datashield.aggregate(datasources, calltext)											#
 																											#	
 	no.errors<-TRUE																							#
 	for(nd in 1:num.datasources){																			#

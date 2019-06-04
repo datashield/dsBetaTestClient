@@ -79,7 +79,7 @@ ds.make.o('indID-indID','ZEROS') to create a vector of zeros of that same
 length may also be useful.
 }
 \examples{
-{
+\dontrun{
 
 ##EXAMPLE 1
 ##CONVERT PROPORTIONS IN prop.rand TO log(odds) IN logodds.rand

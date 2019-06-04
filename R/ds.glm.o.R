@@ -189,7 +189,8 @@
 #' @seealso \link{ds.lexis} for survival analysis using piecewise exponential regression
 #' @seealso \link{ds.gee} for generalized estimating equation models
 #' @export
-#' @examples {
+#' @examples
+#' \dontrun{
 #' #  Example 1:
 #' #The components of the standard output from ds.glm are listed below. Additional
 #' #explanatory material for some
@@ -475,7 +476,7 @@ ds.glm.o <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weights=
        cat("\n using the offset or weights argument.\n\n")
 	}
 
-  formula <- as.formula(formula)
+  formula <- stats::as.formula(formula)
 
   
   # check that 'family' was set
@@ -516,7 +517,7 @@ ds.glm.o <- function(formula=NULL, data=NULL, family=NULL, offset=NULL, weights=
  
    cally1 <- call('glmDS1.o', formula, family, weights, data)
    
-   study.summary.0 <- datashield.aggregate(datasources, cally1)
+   study.summary.0 <- opal::datashield.aggregate(datasources, cally1)
 
 at.least.one.study.data.error<-0
 
@@ -625,7 +626,7 @@ if(sum.y.invalid>0||sum.Xpar.invalid>0||sum.w.invalid>0||sum.glm.saturation.inva
 #NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
     cally2 <- call('glmDS2.o', formula, family, beta.vect=beta.vect.temp, offset, weights, data)
 
-      study.summary <- datashield.aggregate(datasources, cally2)
+      study.summary <- opal::datashield.aggregate(datasources, cally2)
 
   
 
@@ -661,7 +662,7 @@ if(sum.y.invalid>0||sum.Xpar.invalid>0||sum.w.invalid>0||sum.glm.saturation.inva
    	return(list(output.blocked.information.1,
 			output.blocked.information.2,
 			output.blocked.information.3,
-			output.blocked.information.4,
+			output.blocked.information.4
 	            ))
 	}
 
@@ -718,10 +719,10 @@ if(sum.y.invalid>0||sum.Xpar.invalid>0||sum.w.invalid>0||sum.glm.saturation.inva
       message("\nbeta: ", paste(as.vector(beta.vect.next), collapse=" "))
       
       message("\nInformation matrix overall:")
-      message(paste(capture.output(info.matrix.total), collapse="\n"))
+      message(paste(utils::capture.output(info.matrix.total), collapse="\n"))
       
       message("\nScore vector overall:")
-      message(paste(capture.output(score.vect.total), collapse="\n"))
+      message(paste(utils::capture.output(score.vect.total), collapse="\n"))
       
       message("\nCurrent deviance: ", dev.total, "\n")
     }
@@ -735,10 +736,10 @@ if(sum.y.invalid>0||sum.Xpar.invalid>0||sum.w.invalid>0||sum.glm.saturation.inva
     message("\nbeta: ", paste(as.vector(beta.vect.next), collapse=" "))
     
     message("\nInformation matrix overall:")
-    message(paste(capture.output(info.matrix.total), collapse="\n"))
+    message(paste(utils::capture.output(info.matrix.total), collapse="\n"))
     
     message("\nScore vector overall:")
-    message(paste(capture.output(score.vect.total), collapse="\n"))
+    message(paste(utils::capture.output(score.vect.total), collapse="\n"))
     
     message("\nCurrent deviance: ", dev.total, "\n")
   }
@@ -761,14 +762,14 @@ if(sum.y.invalid>0||sum.Xpar.invalid>0||sum.w.invalid>0||sum.glm.saturation.inva
     family.identified<-1
     se.vect.final <- sqrt(diag(variance.covariance.matrix.total)) * sqrt(scale.par)
     z.vect.final<-beta.vect.final/se.vect.final
-    pval.vect.final<-2*pnorm(-abs(z.vect.final))
+    pval.vect.final<-2*stats::pnorm(-abs(z.vect.final))
     parameter.names<-names(score.vect.total[,1])
     model.parameters<-cbind(beta.vect.final,se.vect.final,z.vect.final,pval.vect.final)
     dimnames(model.parameters)<-list(parameter.names,c("Estimate","Std. Error","z-value","p-value"))
     
     if(CI > 0)
     {
-      ci.mult <- qnorm(1-(1-CI)/2)
+      ci.mult <- stats::qnorm(1-(1-CI)/2)
       low.ci.lp <- model.parameters[,1]-ci.mult*model.parameters[,2]
       hi.ci.lp <- model.parameters[,1]+ci.mult*model.parameters[,2]
       estimate.lp <- model.parameters[,1]

@@ -29,8 +29,8 @@ ds.listServersideFunctions.o<-function(datasources=NULL){
 
 	num.datasources<-length(datasources)
 
-	assign.funs<-dsadmin.get_methods(datasources, 'assign')
-	aggregate.funs<-dsadmin.get_methods(datasources, 'aggregate')
+	assign.funs<-opaladmin::dsadmin.get_methods(datasources, 'assign')
+	aggregate.funs<-opaladmin::dsadmin.get_methods(datasources, 'aggregate')
 	
 	serverside.assign.functions<-list()
 	serverside.aggregate.functions<-list()

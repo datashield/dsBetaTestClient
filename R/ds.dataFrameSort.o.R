@@ -60,7 +60,7 @@
 #' @param sort.numeric logical, if TRUE the sort key is treated as if numeric
 #' Default=FALSE.
 #' @param newobj This a character string providing a name for the output
-#' data.frame which defaults to '<df.name>_sorted' if no name is specified
+#' data.frame which defaults to '<df.name>.sorted' if no name is specified
 #' where <df.name> is the first argument of ds.dataFrameSort.o().
 #' @param datasources specifies the particular opal object(s) to use. If the <datasources>
 #' argument is not specified the default set of opals will be used. The default opals
@@ -71,7 +71,7 @@
 #' the argument can be specified as: e.g. datasources=opals.em[2].
 #' If you wish to specify the first and third opal servers in a set you specify:
 #' e.g. datasources=opals.em[c(1,3)]
-#' @return the object specified by the <newobj> argument (or default name <df.name>_sorted)
+#' @return the object specified by the <newobj> argument (or default name <df.name>.sorted)
 #' which is written to the serverside. In addition, two validity messages are returned
 #' indicating whether <newobj> has been created in each data source and if so whether
 #' it is in a valid form. If its form is not valid in at least one study - e.g. because
@@ -93,10 +93,10 @@ ds.dataFrameSort.o<-function(df.name=NULL, sort.key.name=NULL, sort.descending=F
     datasources <- findLoginObjects()
   }
  
-  if(is.null(newobj)){newobj<-paste0(df.name,"_sorted")}
+  if(is.null(newobj)){newobj<-paste0(df.name,".sorted")}
   
     calltext <- call("dataFrameSortDS.o", df.name, sort.key.name, sort.descending, sort.alphabetic, sort.numeric)
-  	datashield.assign(datasources, newobj, calltext)
+    opal::datashield.assign(datasources, newobj, calltext)
 
 #############################################################################################################
 #DataSHIELD CLIENTSIDE MODULE: CHECK KEY DATA OBJECTS SUCCESSFULLY CREATED                                  #
@@ -108,7 +108,7 @@ test.obj.name<-newobj																					 	#
 # CALL SEVERSIDE FUNCTION                                                                                	#
 calltext <- call("testObjExistsDS.o", test.obj.name)													 	#
 																											#
-object.info<-datashield.aggregate(datasources, calltext)												 	#
+object.info<-opal::datashield.aggregate(datasources, calltext)												 	#
 																											#
 # CHECK IN EACH SOURCE WHETHER OBJECT NAME EXISTS														 	#
 # AND WHETHER OBJECT PHYSICALLY EXISTS WITH A NON-NULL CLASS											 	#
@@ -150,7 +150,7 @@ if(obj.name.exists.in.all.sources && obj.non.null.in.all.sources){										 	#
 	}																										#
 																											#
 	calltext <- call("messageDS.o", test.obj.name)															#
-    studyside.message<-datashield.aggregate(datasources, calltext)											#
+    studyside.message<-opal::datashield.aggregate(datasources, calltext)											#
 																											#	
 	no.errors<-TRUE																							#
 	for(nd in 1:num.datasources){																			#

@@ -15,7 +15,7 @@
 #' if no default could be identified, but that did not work in all versions of R and so was removed.
 #' @keywords internal
 #' @return returns a list of opal login objects or stops the process
-#' @author Gaye A; Burton PR
+#' @author Amadou Gaye, Paul Burton (updated 15/10/18). THIS IS VERSION TO USE 8/2/19.
 #' 
 findLoginObjects <- function(){
 

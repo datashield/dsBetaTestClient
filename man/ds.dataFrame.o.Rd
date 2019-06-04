@@ -6,7 +6,8 @@
 \usage{
 ds.dataFrame.o(x = NULL, row.names = NULL, check.rows = FALSE,
   check.names = TRUE, stringsAsFactors = TRUE, completeCases = FALSE,
-  DataSHIELD.checks = FALSE, newobj = "df_new", datasources = NULL)
+  DataSHIELD.checks = FALSE, newobj = "df_new", datasources = NULL,
+  notify.of.progress = FALSE)
 }
 \arguments{
 \item{x}{This is a vector of character strings representing the names of the elemental
@@ -39,7 +40,7 @@ there are never any duplicates when check.names is invoked by the
 serverside function dataFrameDS.o}
 
 \item{stringsAsFactors}{logical: should character vectors be converted
-to factors? The ‘factory-fresh’ default is TRUE.}
+to factors? The 'factory-fresh' default is TRUE.}
 
 \item{completeCases}{logical. Default FALSE. If TRUE then any rows with
 missing values
@@ -61,6 +62,9 @@ apply the function solely to e.g. the second opal server in a set of three,
 the argument can be specified as: e.g. datasources=opals.em[2].
 If you wish to specify the first and third opal servers in a set you specify:
 e.g. datasources=opals.em[c(1,3)]}
+
+\item{notify.of.progress}{specifies if console output should be produce to indicate
+progress. The default value for notify.of.progress is FALSE.}
 }
 \value{
 the object specified by the <newobj> argument (or default name <df_new>).

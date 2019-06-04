@@ -213,7 +213,7 @@ and information matrices). It will then rely on functions in the
 R package metafor to meta-analyse the key parameters.
 }
 \examples{
-{
+\dontrun{
 #  Example 1:
 #The components of the standard output from ds.glm are listed below. Additional
 #explanatory material for some

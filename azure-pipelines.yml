@@ -25,6 +25,8 @@ steps:
     sudo apt-get clean all
 
     sudo /opt/puppetlabs/puppet/bin/gem install r10k
+    sudo /opt/puppetlabs/puppet/bin/gem uninstall cri -I --version 2.15.7
+    sudo /opt/puppetlabs/puppet/bin/gem install cri --version 2.15.6
 
     echo -n "Puppet version: "
     /opt/puppetlabs/bin/puppet --version
@@ -36,18 +38,21 @@ steps:
   displayName: 'Install DataSHIELD server'
 
 - bash: |
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-    sudo add-apt-repository 'deb [arch=amd64,i386] https://cran.rstudio.com/bin/linux/ubuntu xenial/'
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran35/'
     sudo apt-get update
-    sudo apt-get install -qq libxml2-dev libcurl4-openssl-dev libssl-dev -y
+    sudo apt-get install -qq libxml2-dev libcurl4-openssl-dev libssl-dev libgsl-dev -y
     sudo apt-get install -qq r-base -y
     sudo R -e "install.packages('devtools', dependencies=TRUE)"
+    sudo R -e "install.packages('metafor', dependencies=TRUE)"
+    sudo R -e "devtools::install_github(repo='datashield/opal', ref='master')"
+    sudo R -e "devtools::install_github(repo='datashield/opaladmin', ref='master')"
     sudo R -e "library('devtools'); library('opal'); library('opaladmin'); opals <- opal.login(username='administrator', password='password', url='http://127.0.0.1:8080'); opaladmin::dsadmin.install_package(opal=opals,pkg='dsBetaTest',githubusername='datashield',ref='master'); datashield.logout(opals)"
   displayName: 'Install R client'
 
 - bash: |
     R -e "library('devtools'); devtools::check(args = c('--no-examples'))" | tee azure-pipelines_check.Rout
-    grep --quiet "0 error" azure-pipelines_check.Rout
+    grep --quiet "0 error" azure-pipelines_check.Rout && grep --quiet "0 warnings" azure-pipelines_check.Rout && grep --quiet "0 note" azure-pipelines_check.Rout
   displayName: 'Devtools checks'
   condition: always()
 

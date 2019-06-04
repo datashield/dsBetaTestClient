@@ -142,10 +142,10 @@ the coding restriction that prohibits this particular way of specifying this rec
 
  
     calltext1 <- call("recodeValuesDS1.o", var.name, values2replace.transmit, new.values.transmit)
-  	return.warning.message<-datashield.aggregate(datasources, calltext1)
+  	return.warning.message<-opal::datashield.aggregate(datasources, calltext1)
 	
     calltext2 <- call("recodeValuesDS2.o", var.name, values2replace.transmit, new.values.transmit,numeric.output.format.possible,force.output.format,v2r.numeric)
-  	datashield.assign(datasources, newobj, calltext2)
+  	opal::datashield.assign(datasources, newobj, calltext2)
 
 	numsources<-length(datasources)
 	for(s in 1:numsources){
@@ -171,7 +171,7 @@ test.obj.name<-newobj																					 	#
 # CALL SEVERSIDE FUNCTION                                                                                	#
 calltext <- call("testObjExistsDS.o", test.obj.name)													 	#
 																											#
-object.info<-datashield.aggregate(datasources, calltext)												 	#
+object.info<-opal::datashield.aggregate(datasources, calltext)												 	#
 																											#
 # CHECK IN EACH SOURCE WHETHER OBJECT NAME EXISTS														 	#
 # AND WHETHER OBJECT PHYSICALLY EXISTS WITH A NON-NULL CLASS											 	#
@@ -213,7 +213,7 @@ if(obj.name.exists.in.all.sources && obj.non.null.in.all.sources){										 	#
 	}																										#
 																											#
 	calltext <- call("messageDS.o", test.obj.name)															#
-    studyside.message<-datashield.aggregate(datasources, calltext)											#
+    studyside.message<-opal::datashield.aggregate(datasources, calltext)											#
 																											#	
 	no.errors<-TRUE																							#
 	for(nd in 1:num.datasources){																			#

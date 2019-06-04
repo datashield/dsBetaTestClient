@@ -104,7 +104,7 @@ group). For the future, we plan to extend ds.meanByClass to report both total an
 counts in subgroups.
 }
 \examples{
-{
+\dontrun{
 
 # #load that contains the login details
 # data(logindata)

@@ -9,25 +9,30 @@ ds.seq.o(FROM.value.char = "1", BY.value.char = "1",
   newobj = "newObj", datasources = NULL)
 }
 \arguments{
-\item{FROM.value.char, }{a number given as a character denoting the starting value of the sequence. 
-The default value is set to 1.}
+\item{FROM.value.char}{the starting value for the sequence expressed as an integer
+in character form. e.g. FROM.value.char="1" will start at 1, FROM.value.char="-10"
+will start at -10. Default = "1"}
 
-\item{BY.value.char, }{a number given as a character indicating the increment of the sequence.
-The default value is set to 1.}
+\item{BY.value.char}{the value to increment each step in the sequence
+expressed as a numeric e.g. BY.value.char="10" will increment by 10,
+while BY.value.char="-3.37" will reduce the value of each sequence
+element by -3.37. Default = "1" but does not have to be integer}
 
-\item{LENGTH.OUT.value.char, }{a non-negative number given as character denoting the desired 
-length of the sequence. If the argument \code{ALONG.WITH.name} is set, then the
-\code{LENGTH.OUT.value.char} argument must miss out.}
+\item{LENGTH.OUT.value.char}{The length of the sequence at which point
+its extension should be stopped. e.g.  LENGTH.OUT.value.char="1000" will
+generate a sequence of length 1000. Default = NULL (must be specified) but
+must be a positive integer}
 
-\item{ALONG.WITH.name, }{is the name of a serverside vector in inverted commas that is used to
-determine the length of the created vector. The length of the assigned sequence will then be
-equal to the length of the vector specified by the \code{ALONG.WITH.name} argument even if
-a value for the \code{LENGTH.OUT.value.char} argument is set. If you want to specify the output
-length with the \code{LENGTH.OUT.value.char} argument you must miss out the \code{ALONG.WITH.name}
-argument altogether}
+\item{ALONG.WITH.name}{For convenience, rather than specifying a value
+for LENGTH.OUT it can often be better to specify a variable name as
+the <ALONG.WITH.name> argument. e.g. ALONG.WITH.name = "vector.name".
+This can be particularly useful in DataSHIELD
+where the length of the sequence you need to generate in each data set
+depends on the standard length of vectors in that data set and this will
+in general vary.}
 
 \item{newobj}{This a character string providing a name for the output
-sequence vector which defaults to 'newObject' if no name is specified.}
+sequence vector which defaults to 'newObj' if no name is specified.}
 
 \item{datasources}{specifies the particular opal object(s) to use. If the <datasources>
 argument is not specified the default set of opals will be used. The default opals
@@ -37,20 +42,30 @@ inverted commas: e.g. datasources=opals.em or datasources=default.opals. If you 
 apply the function solely to e.g. the second opal server in a set of three,
 the argument can be specified as: e.g. datasources=opals.em[2].
 If you wish to specify the first and third opal servers in a set you specify:
-e.g. datasources=opals.em[c(1,3)]}
+e.g. datasources=opals.em[c(1,3)].}
 }
 \value{
-the object specified by the newobj argument (or default name newObject) is written to the
-serverside and a validity message indicating whether the newobject has been correctly
-created at each source is returned to the client. The object is a sequence vector. If it has not
-been correctly created the return object return.info details in which source the problem exists
-and whether: (a) the object exists at all; (b) it has meaningful content indicated by a valid class.
+the object specified by the <newobj> argument (or default name newObj)
+which is written to the serverside. 
+As well as writing the output object as <newobj>
+on the serverside, two validity messages are returned
+indicating whether <newobj> has been created in each data source and if so whether
+it is in a valid form. If its form is not valid in at least one study - e.g. because
+a disclosure trap was tripped and creation of the full output object was blocked -
+{ds.seq.o()} also returns any studysideMessages that can explain the error in creating
+the full output object. As well as appearing on the screen at run time,if you wish to
+see the relevant studysideMessages at a later date you can use the {ds.message.o}
+function. If you type ds.message.o("<newobj>") it will print out the relevant
+studysideMessage from any datasource in which there was an error in creating <newobj>
+and a studysideMessage was saved. If there was no error and <newobj> was created
+without problems no studysideMessage will have been saved and ds.message.o("<newobj>")
+will return the message: "ALL OK: there are no studysideMessage(s) on this datasource".
 }
 \description{
-Generates useful sequences to support data management and analysis
+ds.seq.o calling assign function seqDS.o
 }
 \details{
-An assign function that uses the native R function seq() to create
+Calls an assign function that uses the native R function seq() to create
 any one of a flexible range of sequence vectors that can then be used to help
 manage and analyse data. As it is an assign function the resultant vector is
 written as a new object onto all of the specified data source servers. For
@@ -65,5 +80,5 @@ sequence; <by>, its increment (+ or -), and <length.out> the length of the final
 in each data source.
 }
 \author{
-Paul Burton, Demetris Avraam for DataSHIELD Development Team
+Paul Burton for DataSHIELD Development Team
 }

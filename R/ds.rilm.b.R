@@ -71,7 +71,7 @@ is.whole <- function(x){
 	N.centres <- length(datasources)
 			
 	call <- paste0("rilmDS.b(", paste(..., sep=", "), ", ", "yvar=", y, ")")
-	output <- datashield.aggregate(datasources, call)
+	output <- opal::datashield.aggregate(datasources, call)
 
 	N.subs <- list()
 	XX_Matrixes <- list()

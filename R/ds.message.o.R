@@ -17,7 +17,7 @@
 #' unexpected ways that someone may try to get round this limitation, a
 #' $studysideMessage is a string that cannot exceed a length of nfilter.string
 #' a default of 80 characters.  
-#' @param message.obj is a character string, containing the name of the list containing the
+#' @param message.obj.name is a character string, containing the name of the list containing the
 #' message. As an example, the server-side function lexisDS2.o enacts the
 #' command:    datashield.assign(datasources, "messageobj", calltext2)
 #' As a standard assign function its output is directed to the list object named
@@ -34,32 +34,17 @@
 #' of each call. In combination, these two notes alert the user to the fact that if there is
 #' an error, there may be additional information available in a studysideMessage, and also
 #' tells them how to retrieve that message.
+#' @param datasources specifies the particular opal object(s) to use, if it is not specified
+#' the default set of opals will be used. The default opals are always called default.opals.
+#' This parameter is set without inverted commas: e.g. datasources=opals.em or datasources=default.opals
+#' If you wish to specify the second opal server in a set of three, the parameter is specified:
+#' e.g. datasources=opals.em[2]. If you wish to specify the first and third opal servers in a set specify:
+#' e.g. datasources=opals.em[2,3]
 #' @return a list object from each study, containing whatever message has been written by
 #' DataSHIELD into $studysideMessage.
 #' @author Burton PR
 #' @export
-#' @examples {
-#' 
-#'   # load that contains the login details
-#'   data(logindata)
-#'   library(opal)
-#'
-#'   # login and assign specific variable(s)
-#'   myvar <- list('LAB_TSC')
-#'   opals <- datashield.login(logins=logindata,assign=TRUE,variables=myvar)
-#' 
-#'   # Example 1: compute the pooled statistical mean of the variable 'LAB_TSC' - default behaviour
-#'   ds.mean(x='D$LAB_TSC')
-#' 
-#'   # Example 2: compute the statistical mean of each study separately
-#'   ds.mean(x='D$LAB_TSC', type='split')
-#' 
-#'   # clear the Datashield R sessions and logout
-#'   datashield.logout(opals)
-#' 
-#' }
-
-ds.message.o<-function(message.obj=NULL,datasources=NULL){
+ds.message.o<-function(message.obj.name=NULL,datasources=NULL){
   
   # if no opal login details are provided look for 'opal' objects in the environment
   if(is.null(datasources)){
@@ -68,13 +53,13 @@ ds.message.o<-function(message.obj=NULL,datasources=NULL){
 
   # Check if user has provided the name of the studyside list object that holds the required message
   # Also check that it is in character format (in inverted commas)
-  if(is.null(message.obj) | !is.character(message.obj)){
+  if(is.null(message.obj.name) | !is.character(message.obj.name)){
     stop("Please provide the name of the studyside list object that holds the message\n in character format ie: 'object.name' in inverted commas", call.=FALSE)
   }
 
 # CALL THE MAIN SERVER SIDE FUNCTION
-  calltext <- call("messageDS.o", message.obj)
-  output.message<-datashield.aggregate(datasources, calltext)
+  calltext <- call("messageDS.o", message.obj.name)
+  output.message<-opal::datashield.aggregate(datasources, calltext)
   
 #RETURN COMPLETION INFORMATION TO .GlobalEnv
     message("\nMESSAGES FROM STUDYSIDE SERVERS ARE:-\n")

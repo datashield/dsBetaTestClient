@@ -86,7 +86,7 @@ return(mess1)
 }
 
   calltext <- paste0("setSeedDS.o(", seed.as.text, ")")
-  ssDS.obj <- datashield.aggregate(datasources, as.symbol(calltext))
+  ssDS.obj <- opal::datashield.aggregate(datasources, as.symbol(calltext))
 
   return.message<-paste0("Trigger integer to prime random seed = ",seed.as.text)
   

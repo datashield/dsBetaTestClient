@@ -16,6 +16,8 @@
 #' in "package:dsModellingClient". Default = FALSE.
 #' @param dsStatsClient logical, if TRUE will selectively list client-side functions
 #' in "package:dsStatsClient". Default = FALSE.
+#' @param dsBetaTestClient logical, if TRUE will selectively list client-side functions
+#' in "package:dsBetaTestClient". Default = FALSE.
 #' @param userDefinedClient logical, if TRUE will selectively list user defined
 #' client-side functions held as R objects with name "ds. ..." in .Global.env". Default = FALSE.
 #' @return list containing all functions in each or all of these five classes
@@ -26,11 +28,12 @@ ds.listClientsideFunctions.o  <-function(all.functions=TRUE,
 					    	dsGraphicsClient=FALSE,
 					    	dsModellingClient=FALSE,
 					    	dsStatsClient=FALSE,
+							dsBetaTestClient=FALSE,
 						userDefinedClient=FALSE
 						){
 #THIS IS UNDERLYING SEARCH FUNCTION IN R IF NEEDED: search()	
 	if(all.functions==TRUE&&dsBaseClient==FALSE&&dsGraphicsClient==FALSE&&
-	dsModellingClient==FALSE&&dsStatsClient==FALSE&&dsStatsClient==FALSE&&
+	dsModellingClient==FALSE&&dsStatsClient==FALSE&&dsBetaTestClient==FALSE&&
 	userDefinedClient==FALSE){
 	cat("\n### dsBaseClient functions \n")
 	print(ls(pos="package:dsBaseClient"))
@@ -40,6 +43,8 @@ ds.listClientsideFunctions.o  <-function(all.functions=TRUE,
 	print(ls(pos="package:dsModellingClient"))
 	cat("\n\n### dsStatsClient functions \n")
 	print(ls(pos="package:dsStatsClient"))
+	cat("\n\n### dsBetaTestClient functions \n")
+	print(ls(pos="package:dsBetaTestClient"))
 	cat("\n\n### userDefinedClient functions \n")
 	print(ls(pos=".GlobalEnv",pattern="ds.*"))
 
@@ -56,14 +61,20 @@ ds.listClientsideFunctions.o  <-function(all.functions=TRUE,
 	if(dsStatsClient==TRUE){
 		cat("\n### dsStatsClient functions \n")
 		print(ls(pos="package:dsStatsClient"))}
+	if(dsBetaTestClient==TRUE){
+		cat("\n### dsBetaTestClient functions \n")
+		print(ls(pos="package:dsBetaTestClient"))}
 	if(userDefinedClient==TRUE){
 		cat("\n### userDefinedClient functions \n")
 		print(ls(pos=".GlobalEnv",pattern="ds.*"))}
 
 	if(dsBaseClient==FALSE&&dsGraphicsClient==FALSE&&dsModellingClient==FALSE&&
-		dsStatsClient==FALSE&&dsStatsClient==FALSE&&userDefinedClient==FALSE){
+		dsStatsClient==FALSE&&dsStatsClient==FALSE&&dsBetaTestClient==FALSE&&userDefinedClient==FALSE){
 
 	print("ALL OPTIONS DECLARED FALSE SO NO OUTPUT")
 	}
    }
 }
+#ds.listClientsideFunctions.o
+
+

@@ -149,7 +149,8 @@
 #' @seealso \code{ds.glm} for genralized linear models
 #' @seealso \code{ds.gee} for generalized estimating equation models
 #' @export
-#' @examples {
+#' @examples
+#' \dontrun{
 #' #EXAMPLE 1
 #' #In this example, the data to be expanded are held in a dataframe called 'CM'. The survival time
 #' #intervals are to be 0<t<=2.5; 2.5<t<=5.0, 5.0<t<=7.5, up to the final interval of duration 2.5
@@ -259,7 +260,7 @@ ds.lexis.o<-function(data=NULL, intervalWidth=NULL, idCol=NULL, entryCol=NULL, e
 #SOURCE. THE MAXIMUM I EACH SOURCE IS MASKED BY A RANDOM POSITIVE INCREMENT
   calltext1 <- call("lexisDS1.o", exitCol)
 
-  maxtime<-datashield.aggregate(datasources, calltext1)
+  maxtime<-opal::datashield.aggregate(datasources, calltext1)
   
   num.studies<-length(datasources)
 
@@ -288,12 +289,12 @@ intervalWidth.transmit<-paste0(as.character(intervalWidth),collapse=",")
 #FOLLOW-UP TIME BREAKS IN EACH STUDY (ALL THE SAME)
   # call the main server side function
   calltext2 <- call("lexisDS2.o", data, intervalWidth=intervalWidth.transmit, maxmaxtime, idCol, entryCol, exitCol, statusCol, variables)
-  	datashield.assign(datasources, "messageobj", calltext2)
+  	opal::datashield.assign(datasources, "messageobj", calltext2)
 
 	
 	
   calltext3<- call("lexisDS3.o")
-  	datashield.assign(datasources, expandDF, calltext3)
+  	opal::datashield.assign(datasources, expandDF, calltext3)
 
 
 #RETURN COMPLETION INFORMATION TO CLIENT SIDE

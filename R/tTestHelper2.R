@@ -38,7 +38,7 @@ tTestHelper2 <- function(formula, CI, datasources) {
   }
   
   # turn the formula provided as a character into a formula object
-  formula <- as.formula(formula)
+  formula <- stats::as.formula(formula)
   family <- 'gaussian'
   
   # number of 'valid' studies (those that passed the checks) and vector of beta values
@@ -135,14 +135,14 @@ tTestHelper2 <- function(formula, CI, datasources) {
     t.df <- (nsubs.total-length(beta.vect.next))
     se.vect.final <- sqrt(diag(variance.covariance.matrix.total)) * sqrt(scale.par)
     z.vect.final <- beta.vect.final/se.vect.final
-    pval.vect.final <- 2*pt(q=-abs(z.vect.final),df=t.df)
+    pval.vect.final <- 2*stats::pt(q=-abs(z.vect.final),df=t.df)
     parameter.names <- names(score.vect.total[,1])
     model.parameters <- cbind(beta.vect.final,se.vect.final,z.vect.final,pval.vect.final)
     dimnames(model.parameters) <- list(parameter.names,c("Estimate","Std. Error","t-value","p-value"))
     
     if(CI > 0){
       
-      ci.mult <- qt(p=(1-(1-CI)/2),df=t.df)
+      ci.mult <- stats::qt(p=(1-(1-CI)/2),df=t.df)
       low.ci.lp <- model.parameters[,1]-ci.mult*model.parameters[,2]
       hi.ci.lp <- model.parameters[,1]+ci.mult*model.parameters[,2]
       estimate.lp <- model.parameters[,1]

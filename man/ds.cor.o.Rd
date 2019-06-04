@@ -51,7 +51,7 @@ user to make a decision about the 'relevance' of the correlation based on the nu
 cases included in the correlation calculations.
 }
 \examples{
-{
+\dontrun{
 
 #  # load that contains the login details
 #  data(glmLoginData)
@@ -60,7 +60,7 @@ cases included in the correlation calculations.
 #  # login and assign specific variable(s)
 #  # (by default the assigned dataset is a dataframe named 'D')
 #  myvar <- list('LAB_HDL', 'LAB_TSC', 'LAB_GLUC_ADJUSTED', 'GENDER')
-#  opals <- datashield.login(logins=glmLoginData, assign=TRUE, variables=myvar)
+#  opals <- opal::datashield.login(logins=glmLoginData, assign=TRUE, variables=myvar)
 #
 #  # Example 1: generate the correlation matrix for the assigned dataset 'D' 
 #  # which contains 4 vectors (3 continuous and 1 categorical)
@@ -81,7 +81,7 @@ cases included in the correlation calculations.
 #  ds.cor.o(x='labhdl', y='gender', naAction='casewise.complete', type='combine')
 #
 #  # clear the Datashield R sessions and logout
-#  datashield.logout(opals)
+#  opal::datashield.logout(opals)
 
 }
 

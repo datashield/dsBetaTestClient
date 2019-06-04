@@ -64,7 +64,8 @@
 #' content indicated by a valid class. 
 #' @author DataSHIELD Development Team
 #' @export
-#' @examples {
+#' @examples
+#' \dontrun{
 #'
 #' ##EXAMPLE 1
 #' ##CONVERT PROPORTIONS IN prop.rand TO log(odds) IN logodds.rand
@@ -102,7 +103,7 @@ ds.make.o<-function(toAssign=NULL, newobj="newObject", datasources=NULL){
   }
   
   # now do the business
-  datashield.assign(datasources, newobj, as.symbol(toAssign))
+  opal::datashield.assign(datasources, newobj, as.symbol(toAssign))
 
 #############################################################################################################
 #DataSHIELD CLIENTSIDE MODULE: CHECK KEY DATA OBJECTS SUCCESSFULLY CREATED                                  #
@@ -118,7 +119,7 @@ test.obj.name<-newobj																					 	#
 # CALL SEVERSIDE FUNCTION                                                                                	#
 calltext <- call("testObjExistsDS.o", test.obj.name)													 	#
 																											#
-object.info<-datashield.aggregate(datasources, calltext)												 	#
+object.info<-opal::datashield.aggregate(datasources, calltext)												 	#
 																											#
 # CHECK IN EACH SOURCE WHETHER OBJECT NAME EXISTS														 	#
 # AND WHETHER OBJECT PHYSICALLY EXISTS WITH A NON-NULL CLASS											 	#
@@ -160,7 +161,7 @@ if(obj.name.exists.in.all.sources && obj.non.null.in.all.sources){										 	#
 	}																										#
 																											#
 	calltext <- call("messageDS.o", test.obj.name)															#
-    studyside.message<-datashield.aggregate(datasources, calltext)											#
+    studyside.message<-opal::datashield.aggregate(datasources, calltext)											#
 																											#	
 	no.errors<-TRUE																							#
 	for(nd in 1:num.datasources){																			#

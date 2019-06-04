@@ -35,7 +35,8 @@
 #' @seealso \code{ds.quantileMean} to compute quantiles.
 #' @seealso \code{ds.summary} to generate the summary of a variable.
 #' @export
-#' @examples {
+#' @examples
+#' \dontrun{
 #' 
 #' #  # load that contains the login details
 #' #  data(logindata)
@@ -113,12 +114,9 @@ if(type == 'both' | type == 'b' ) type <- 'both'                                
 #MODIFY FUNCTION CODE TO DEAL WITH ALL THREE TYPES                                                #
 ###################################################################################################
 
- 
-  # number of studies
-  num.sources <- length(datasources)
   
   cally <- paste0("meanDS.o(", x, ")")
-  ss.obj <- datashield.aggregate(datasources, as.symbol(cally))
+  ss.obj <- opal::datashield.aggregate(datasources, as.symbol(cally))
   
   Nstudies <- length(datasources)
     ss.mat <- matrix(as.numeric(matrix(unlist(ss.obj),nrow=Nstudies,byrow=TRUE)[,1:4]),nrow=Nstudies)
@@ -144,15 +142,15 @@ if(type == 'both' | type == 'b' ) type <- 'both'                                
       mean.study.specific <- ss.mat[j,1]
       Nvalid.study.specific <- ss.mat[j,3]
       # SAVE VALIDITY MESSAGE
-      datashield.assign(selected.opal, "mean.study.specific", as.symbol(mean.study.specific))
-      datashield.assign(selected.opal, "Nvalid.study.specific", as.symbol(Nvalid.study.specific))
+      opal::datashield.assign(selected.opal, "mean.study.specific", as.symbol(mean.study.specific))
+      opal::datashield.assign(selected.opal, "Nvalid.study.specific", as.symbol(Nvalid.study.specific))
     }
 
     # SAVE KEY GLOBAL STATISTICS ON ALL OPAL SERVERS WITH ASSIGN FUNCTION
     mean.all.studies <- ss.mat.combined[1,1]
     Nvalid.all.studies <- ss.mat.combined[1,3]
-    datashield.assign(datasources, "mean.all.studies", as.symbol(mean.all.studies))
-    datashield.assign(datasources, "Nvalid.all.studies", as.symbol(Nvalid.all.studies))
+    opal::datashield.assign(datasources, "mean.all.studies", as.symbol(mean.all.studies))
+    opal::datashield.assign(datasources, "Nvalid.all.studies", as.symbol(Nvalid.all.studies))
 
 #############################################################################
 # MODULE 5: CHECK DATA OBJECTS SUCCESSFULLY CREATED                         #
@@ -188,4 +186,3 @@ print("Data object <mean.all.studies> created successfully in all sources") #
 
 }
 #ds.mean.o
-

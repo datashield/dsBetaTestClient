@@ -233,15 +233,15 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
     
     
     if (alternative == "less") {
-      pval <- pt(tstat, df)
-      cint <- c(-Inf, tstat + qt(conf.level, df))
+      pval <- stats::pt(tstat, df)
+      cint <- c(-Inf, tstat + stats::qt(conf.level, df))
     } else if (alternative == "greater") {
-      pval <- pt(tstat, df, lower.tail = FALSE)
-      cint <- c(tstat - qt(conf.level, df), Inf)
+      pval <- stats::pt(tstat, df, lower.tail = FALSE)
+      cint <- c(tstat - stats::qt(conf.level, df), Inf)
     } else {
-      pval <- 2 * pt(-abs(tstat), df)
+      pval <- 2 * stats::pt(-abs(tstat), df)
       alpha <- 1 - conf.level
-      cint <- qt(1 - alpha/2, df)
+      cint <- stats::qt(1 - alpha/2, df)
       cint <- tstat + c(-cint, cint)
     }
     cint <- mu + cint * stderr
@@ -257,11 +257,11 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
     class(rval) <- "htest"
     
     # delete files that are no more required
-    datashield.rm(datasources, 'pair.compl.obs')
-    datashield.rm(datasources, 'xok')
-    datashield.rm(datasources, 'yok')
-    datashield.rm(datasources, 'not.na.x')
-    datashield.rm(datasources, 'minus_y')  
+    opal::datashield.rm(datasources, 'pair.compl.obs')
+    opal::datashield.rm(datasources, 'xok')
+    opal::datashield.rm(datasources, 'yok')
+    opal::datashield.rm(datasources, 'not.na.x')
+    opal::datashield.rm(datasources, 'minus_y')  
     
     return(rval)
     

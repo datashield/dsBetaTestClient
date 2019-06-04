@@ -154,10 +154,10 @@ if(!is.null(rm.cols)){
   
   
     calltext1 <- call("dataFrameSubsetDS1.o", df.name, V1.name, V2.name, BO.n, keep.cols, rm.cols, keep.NAs=keep.NAs)
-  	return.warning.message<-datashield.aggregate(datasources, calltext1)
+  	return.warning.message<-opal::datashield.aggregate(datasources, calltext1)
 
     calltext2 <- call("dataFrameSubsetDS2.o", df.name, V1.name, V2.name, BO.n, keep.cols, rm.cols, keep.NAs=keep.NAs)
-  	datashield.assign(datasources, newobj, calltext2)
+  	opal::datashield.assign(datasources, newobj, calltext2)
 	
  
 	numsources<-length(datasources)
@@ -184,7 +184,7 @@ test.obj.name<-newobj																					 	#
 # CALL SEVERSIDE FUNCTION                                                                                	#
 calltext <- call("testObjExistsDS.o", test.obj.name)													 	#
 																											#
-object.info<-datashield.aggregate(datasources, calltext)												 	#
+object.info<-opal::datashield.aggregate(datasources, calltext)												 	#
 																											#
 # CHECK IN EACH SOURCE WHETHER OBJECT NAME EXISTS														 	#
 # AND WHETHER OBJECT PHYSICALLY EXISTS WITH A NON-NULL CLASS											 	#
@@ -226,7 +226,7 @@ if(obj.name.exists.in.all.sources && obj.non.null.in.all.sources){										 	#
 	}																										#
 																											#
 	calltext <- call("messageDS.o", test.obj.name)															#
-    studyside.message<-datashield.aggregate(datasources, calltext)											#
+    studyside.message<-opal::datashield.aggregate(datasources, calltext)											#
 																											#	
 	no.errors<-TRUE																							#
 	for(nd in 1:num.datasources){																			#

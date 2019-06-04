@@ -24,7 +24,7 @@ Default=FALSE.}
 Default=FALSE.}
 
 \item{newobj}{This a character string providing a name for the output
-data.frame which defaults to '<df.name>_sorted' if no name is specified
+data.frame which defaults to '<df.name>.sorted' if no name is specified
 where <df.name> is the first argument of ds.dataFrameSort.o().}
 
 \item{datasources}{specifies the particular opal object(s) to use. If the <datasources>
@@ -38,7 +38,7 @@ If you wish to specify the first and third opal servers in a set you specify:
 e.g. datasources=opals.em[c(1,3)]}
 }
 \value{
-the object specified by the <newobj> argument (or default name <df.name>_sorted)
+the object specified by the <newobj> argument (or default name <df.name>.sorted)
 which is written to the serverside. In addition, two validity messages are returned
 indicating whether <newobj> has been created in each data source and if so whether
 it is in a valid form. If its form is not valid in at least one study - e.g. because

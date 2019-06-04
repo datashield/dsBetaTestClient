@@ -64,7 +64,7 @@ It enables a parallelized analysis of individual-level data sitting
 on distinct servers by sending
 }
 \examples{
-{
+\dontrun{
 
 # # load the file that contains the login details
 # data(glmLoginData)

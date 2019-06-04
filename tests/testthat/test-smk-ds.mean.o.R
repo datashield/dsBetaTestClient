@@ -13,18 +13,18 @@
 # Set up
 #
 
-context("dsBetaTestClient::ds.mean.o")
+context("dsBetaTestClient::ds.mean.o:smoke")
 
-options(opal.server1="sim1", opal.server2="sim2", opal.server3="sim3")
-options(opal.table1="CNSIM.CNSIM1", opal.table2="CNSIM.CNSIM2", opal.table3="CNSIM.CNSIM3")
-options(datashield.variables=list("LAB_TSC"))
-source("setup.R")
+source("connection_to_datasets/init_all_datasets.R")
+source("connection_to_datasets/init_smk_datasets.R")
+
+connect.smk.dataset.sim(list("LAB_TSC"))
 
 #
 # Tests
 #
 
-context("dsBetaTestClient::ds.mean.o(type=combine)")
+context("dsBetaTestClient::ds.mean.o:(type=combine):smoke")
 test_that("mean values [combine]", {
     stat.mean <- ds.mean.o(x='D$LAB_TSC',type='combine')
 
@@ -32,7 +32,7 @@ test_that("mean values [combine]", {
     expect_equal(as.numeric(stat.mean$Global.Mean[1]), 5.85192485623003, tolerance = .000000000000001)
 })
 
-context("dsBetaTestClient::ds.mean.o(type=combine) loose")
+context("dsBetaTestClient::ds.mean.o(type=combine) loose:smoke")
 test_that("mean values [combine] loose", {
     stat.mean <- ds.mean.o(x='D$LAB_TSC',type='combine')
 
@@ -40,9 +40,9 @@ test_that("mean values [combine] loose", {
     expect_equal(as.numeric(stat.mean$Global.Mean[1]), 5.85192485623003, tolerance = .000000000000001)
 })
 
-context("dsBetaTestClient::ds.mean.o(type=split)")
+context("dsBetaTestClient::ds.mean.o(type=split):smoke")
 test_that("mean values [split]", {
-    stat.mean <- ds.mean.o(datasources=opals, x='D$LAB_TSC', type='split')
+    stat.mean <- ds.mean.o(datasources=ds.test_env$connection.opal, x='D$LAB_TSC', type='split')
 
     expect_false(is.na(stat.mean$Mean.by.Study[1]))
     expect_equal(stat.mean$Mean.by.Study[1], 5.87211344770338, tolerance = .000000000000001)
@@ -52,9 +52,9 @@ test_that("mean values [split]", {
     expect_equal(stat.mean$Mean.by.Study[3], 5.84630008623168, tolerance = .000000000000001)
 })
 
-context("dsBetaTestClient::ds.mean.o() test errors")
+context("dsBetaTestClient::ds.mean.o() test errors:smoke")
 test_that("mean_erros", {
-    ds.asCharacter(x='D$LAB_TSC', newobj="not_a_numeric")
+    ds.asCharacter.o(x='D$LAB_TSC', newobj="not_a_numeric")
 
     expect_error(ds.mean.o(), "Please provide the name of the input vector!", fixed=TRUE)
 #    expect_error(ds.mean.o(x='D$LAB_TSC', type='datashield'), 'Function argument "type" has to be either "combine" or "split"', fixed=TRUE)
@@ -62,9 +62,7 @@ test_that("mean_erros", {
 })
 
 #
-# Tear down
+# Done
 #
 
-source("teardown.R")
-
-context("dsBetaTestClient::ds.mean.o done")
+context("dsBetaTestClient::ds.mean.o:smoke done")

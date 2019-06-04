@@ -78,13 +78,14 @@
 #' for 'opal' objects in the environment and sets this parameter. 
 #' @return all the unique levels of the converted variable and the tracer of the function
 #' @export
-#' @examples {
+#' @examples
+#' \dontrun{
 #' 
 #' #  # load that contains the login details
 #' #  logindata.VMs.em <- ds.createLogindata(110,110,110,table=c("SURVIVAL.EXPAND_WITH_MISSING1",
 #' #                            "SURVIVAL.EXPAND_WITH_MISSING2","SURVIVAL.EXPAND_WITH_MISSING3"))
 #' #  logindata.VMs.em <- logindata.VMs.em[1:3,]
-#' #  opals.em <- datashield.login(logins=logindata.VMs.em,assign=TRUE,symbol="EM")
+#' #  opals.em <- opal::datashield.login(logins=logindata.VMs.em,assign=TRUE,symbol="EM")
 #' #
 #' #  ds.asNumeric("EM$time.id","TID")
 #' #
@@ -149,7 +150,7 @@ ds.asFactor.o <- function(input.var.name=NULL, newobj.name=NULL, forced.factor.l
   #CALL THE FIRST SERVER SIDE FUNCTION (AN AGGREGATE FUNCTION)
   #TO DETERMINE ALL OF THE LEVELS REQUIRED
   calltext1 <- call("asFactorDS1.o", input.var.name)
-  all.levels <- datashield.aggregate(datasources, calltext1)
+  all.levels <- opal::datashield.aggregate(datasources, calltext1)
   
   numstudies <- length(datasources)
 
@@ -168,7 +169,7 @@ ds.asFactor.o <- function(input.var.name=NULL, newobj.name=NULL, forced.factor.l
   all.unique.levels.transmit <- paste0(all.unique.levels, collapse=",")
 
   calltext2 <- call("asFactorDS2.o", input.var.name, all.unique.levels.transmit, fixed.dummy.vars, baseline.level)
-  datashield.assign(datasources, newobj.name, calltext2)
+  opal::datashield.assign(datasources, newobj.name, calltext2)
 
 ##########################################################################################################
 #MODULE 5: CHECK KEY DATA OBJECTS SUCCESSFULLY CREATED                                                   #
@@ -178,7 +179,7 @@ test.obj.name<-newobj.name                                                      
                                                                                                          #
 # CALL SEVERSIDE FUNCTION                                                                                #
 calltext <- call("testObjExistsDS.o", test.obj.name)													 #
-object.info<-datashield.aggregate(datasources, calltext)												 #
+object.info<-opal::datashield.aggregate(datasources, calltext)												 #
 																										 #
 # CHECK IN EACH SOURCE WHETHER OBJECT NAME EXISTS														 #
 # AND WHETHER OBJECT PHYSICALLY EXISTS WITH A NON-NULL CLASS											 #

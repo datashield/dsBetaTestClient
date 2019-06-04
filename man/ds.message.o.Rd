@@ -4,10 +4,10 @@
 \alias{ds.message.o}
 \title{Return a 'studysideMessage' written by an assign function to serverside}
 \usage{
-ds.message.o(message.obj = NULL, datasources = NULL)
+ds.message.o(message.obj.name = NULL, datasources = NULL)
 }
 \arguments{
-\item{message.obj}{is a character string, containing the name of the list containing the
+\item{message.obj.name}{is a character string, containing the name of the list containing the
 message. As an example, the server-side function lexisDS2.o enacts the
 command:    datashield.assign(datasources, "messageobj", calltext2)
 As a standard assign function its output is directed to the list object named
@@ -24,6 +24,13 @@ These represent two of four notes returned by the client-side function ds.lexis.
 of each call. In combination, these two notes alert the user to the fact that if there is
 an error, there may be additional information available in a studysideMessage, and also
 tells them how to retrieve that message.}
+
+\item{datasources}{specifies the particular opal object(s) to use, if it is not specified
+the default set of opals will be used. The default opals are always called default.opals.
+This parameter is set without inverted commas: e.g. datasources=opals.em or datasources=default.opals
+If you wish to specify the second opal server in a set of three, the parameter is specified:
+e.g. datasources=opals.em[2]. If you wish to specify the first and third opal servers in a set specify:
+e.g. datasources=opals.em[2,3]}
 }
 \value{
 a list object from each study, containing whatever message has been written by
@@ -49,28 +56,6 @@ DataSHIELD can write a $studysideMessage, and as additional protection against
 unexpected ways that someone may try to get round this limitation, a
 $studysideMessage is a string that cannot exceed a length of nfilter.string
 a default of 80 characters.
-}
-\examples{
-{
-
-  # load that contains the login details
-  data(logindata)
-  library(opal)
-
-  # login and assign specific variable(s)
-  myvar <- list('LAB_TSC')
-  opals <- datashield.login(logins=logindata,assign=TRUE,variables=myvar)
-
-  # Example 1: compute the pooled statistical mean of the variable 'LAB_TSC' - default behaviour
-  ds.mean(x='D$LAB_TSC')
-
-  # Example 2: compute the statistical mean of each study separately
-  ds.mean(x='D$LAB_TSC', type='split')
-
-  # clear the Datashield R sessions and logout
-  datashield.logout(opals)
-
-}
 }
 \author{
 Burton PR

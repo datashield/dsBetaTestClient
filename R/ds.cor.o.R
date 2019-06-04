@@ -33,7 +33,8 @@
 #' the control, then the output matrices are returned and also an error message is returned but it is replaced by NA.
 #' @author Gaye A; Avraam D; Burton PR
 #' @export
-#' @examples {
+#' @examples
+#' \dontrun{
 #'
 #' #  # load that contains the login details
 #' #  data(glmLoginData)
@@ -42,7 +43,7 @@
 #' #  # login and assign specific variable(s)
 #' #  # (by default the assigned dataset is a dataframe named 'D')
 #' #  myvar <- list('LAB_HDL', 'LAB_TSC', 'LAB_GLUC_ADJUSTED', 'GENDER')
-#' #  opals <- datashield.login(logins=glmLoginData, assign=TRUE, variables=myvar)
+#' #  opals <- opal::datashield.login(logins=glmLoginData, assign=TRUE, variables=myvar)
 #' #
 #' #  # Example 1: generate the correlation matrix for the assigned dataset 'D' 
 #' #  # which contains 4 vectors (3 continuous and 1 categorical)
@@ -63,7 +64,7 @@
 #' #  ds.cor.o(x='labhdl', y='gender', naAction='casewise.complete', type='combine')
 #' #
 #' #  # clear the Datashield R sessions and logout
-#' #  datashield.logout(opals)
+#' #  opal::datashield.logout(opals)
 #' 
 #' }
 #'
@@ -110,7 +111,7 @@ ds.cor.o <- function(x=NULL, y=NULL, naAction='pairwise.complete', type="split",
       cally <- paste0("covDS.o(x=", x, ", y=NULL", ", use='", naAction, "')")
     }
   }
-  output <- datashield.aggregate(datasources, as.symbol(cally))
+  output <- opal::datashield.aggregate(datasources, as.symbol(cally))
 
   if (type=="split"){
     covariance <- list()

@@ -47,7 +47,7 @@ test.obj.name<-test.obj.name                                                    
 # CALL SEVERSIDE FUNCTION                                                                                #
 calltext <- call("testObjExistsDS.o", test.obj.name)													 #
 																										 #
-object.info<-datashield.aggregate(datasources, calltext)												 #
+object.info<-opal::datashield.aggregate(datasources, calltext)												 #
 																										 #
 # CHECK IN EACH SOURCE WHETHER OBJECT NAME EXISTS														 #
 # AND WHETHER OBJECT PHYSICALLY EXISTS WITH A NON-NULL CLASS											 #

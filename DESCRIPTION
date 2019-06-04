@@ -1,16 +1,18 @@
 Package: dsBetaTestClient
 Title: New DataSHIELD Client Functions
-Version: 0.3.0
+Version: 0.4.4
 Author: DataSHIELD Developers <datashield@newcastle.ac.uk>
 Maintainer: DataSHIELD Developers <datashield@newcastle.ac.uk>
 Description: Beta versions of new DataSHIELD client functions. Collected in this
     temporary package, prior to inclusion in the main DataSHIELD packages.
 License: GPL-3
-Depends:
+Depends: R (>= 3.4.0)
+Imports:
+    metafor,
+    opal,
+    opaladmin,
     dsBaseClient,
     dsStatsClient,
-    dsGraphicsClient,
-    dsModellingClient,
-    opal
+    dsModellingClient
 RoxygenNote: 6.1.1
 Encoding: UTF-8
