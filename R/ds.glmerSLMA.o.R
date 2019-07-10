@@ -4,7 +4,7 @@
 #' @details Fits a thing
 
 #' @export
-ds.lmeSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.metafor=TRUE,dataName=NULL,
+ds.glmerSLMA.o<-function(formula=NULL, family=NULL, offset=NULL, weights=NULL, combine.with.metafor=TRUE,dataName=NULL,
                        checks=FALSE, maxit=15, datasources=NULL) {
   
   # details are provided look for 'opal' objects in the environment
@@ -31,6 +31,12 @@ ds.lmeSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.met
   }
   
   formula <- as.formula(formula)
+  
+  
+  # check that 'family' was set
+  if(is.null(family)){
+    stop(" Please provide a valid 'family' argument!", call.=FALSE)
+  }
   
   # if the argument 'dataName' is set, check that the data frame is defined (i.e. exists) on the server site
   if(!(is.null(dataName))){
@@ -166,7 +172,7 @@ ds.lmeSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.met
   
   #NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
   
-  cally2 <- call('lmeSLMADS2.o', formula, offset, weights, dataName)
+  cally2 <- call('glmerSLMADS2.o', formula, family, offset, weights, dataName)
   
   study.summary <- datashield.aggregate(datasources, cally2)
   
@@ -300,4 +306,4 @@ ds.lmeSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.met
   return(study.summary)
 }
 
-# ds.lmeSLMA.o
+# ds.glmerSLMA.o
