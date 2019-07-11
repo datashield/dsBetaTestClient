@@ -59,7 +59,43 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
   
   numstudies<-length(datasources)
   
-  for(j in 1:numstudies){
+  #INTEGRATE RETURNED OUTPUT
+  .select <- function(l, field) {
+    lapply(l, function(obj) {obj[[field]]})
+  }
+  
+  disclosure.risk.total<-Reduce(f="+", .select(study.summary, 'disclosure.risk'))
+  
+  disclosure.risk<-NULL
+  errorMessage<-NULL
+  
+  for(ss in 1:numstudies){
+    disclosure.risk<-c(disclosure.risk,study.summary[[ss]]$disclosure.risk)
+    errorMessage<-c(errorMessage,study.summary[[ss]]$errorMessage)
+  }
+  
+  disclosure.risk<-as.matrix(disclosure.risk)
+  dimnames(disclosure.risk)<-list(names(datasources),"RISK OF DISCLOSURE")
+  
+  
+  errorMessage<-as.matrix(errorMessage)
+  dimnames(errorMessage)<-list(names(datasources),"ERROR MESSAGES")
+  
+  if(disclosure.risk.total>0){
+    message("DISCLOSURE RISK IN y.vect, X.mat OR w.vect \nOR MODEL OVERPARAMETERIZED IN AT LEAST ONE STUDY")
+    output.blocked.information.1<-"POTENTIAL DISCLOSURE RISK IN y.vect, X.mat OR w.vect"
+    output.blocked.information.2<-"OR MODEL OVERPARAMETERIZED IN AT LEAST ONE STUDY."
+    output.blocked.information.3<-"FURTHERMORE, CLIENTSIDE FUNCTION MAY HAVE BEEN MODIFIED"
+    output.blocked.information.4<-"SO SCORE VECTOR AND INFORMATION MATRIX DESTROYED IN ALL AT-RISK STUDIES"
+    
+    return(list(output.blocked.information.1,
+                output.blocked.information.2,
+                output.blocked.information.3,
+                output.blocked.information.4
+    ))
+  }
+  
+    for(j in 1:numstudies){
     inv.diag.se<-1/sqrt(Matrix::diag(study.summary[[j]]$cov.scaled))
 
     cor.matrix<-t(diag(inv.diag.se))%*%study.summary[[j]]$cov.scaled%*%(diag(inv.diag.se))
