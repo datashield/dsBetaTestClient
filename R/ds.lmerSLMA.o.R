@@ -1,7 +1,84 @@
 
-#' @title ds.glmSLMA.o calling glmDS1.o, calling glmDS1.o, glmSLMADS2.o
+#' @title ds.lmerSLMA.o calling lmerDS2.o
 #' @description Fits a linear mixed effects model (lme) on data from a single or multiple sources
-#' @details Fits a linear mixed effects model (lme) on data from a single or multiple sources
+#' @details  Fits a linear mixed effects model (lme) on data from a single source or from multiple sources.
+#' In the latter case, the lme is fitted to convergence in each data source and the
+#' estimates and standard errors
+#' returned from each study separately. When these are then pooled using a function such as
+#' ds.metafor, this is a form of study level meta-analysis (SLMA). The SLMA approach offers some advantages
+#'  when there is marked heterogeneity
+#' between sources that cannot simply be corrected with fixed effects each reflecting a study
+#' or centre effect. In particular fixed effects cannot simply be used in this way when there
+#' there is heterogeneity in the effect of scientific interest.
+#' @param formula Denotes an object of class formula which is a character string which describes
+#' the model to be fitted. Most shortcut notation allowed by Rlme4's lmer() function is
+#' also allowed by ds.lmerSLMA. Many lmes can be fitted very simply using a formula like:
+#' "y~a+b+(1|c)" which simply means fit a lme with y as the outcome variable with a and b as fixed effects, and c
+#' as a random effect or grouping factor. This allows for a random slope between groups.
+#' By default all such models also include an intercept (regression constant) term.
+#' It is also possible to fit models with random slopes by specifying a model such as "y~a+b+(1+b|c)"
+#' @param offset  A character string specifying the name of a variable to be used as
+#' an offset (effectively
+#' a component of the linear predictor of the lme which has a known coefficient a-priori and so does not need to be
+#' estimated by the model).
+#' @param weights A character string specifying the name of a variable containing
+#' prior regression
+#' weights for the fitting process.
+#' @param dataName A character string specifying the name of an (optional) dataframe that contains
+#' all of the variables in the lme formula. This avoids you having to specify the name of the
+#' dataframe in front of each covariate in the formula e.g. if the dataframe is
+#' called 'DataFrame' you
+#' avoid having to write: "DataFrame$y~DataFrame$a+DataFrame$b+(1|DataFrame$c)"
+#' Processing stops if a non existing data frame is indicated.
+#' @param combine.with.metafor This argument is Boolean. If TRUE (the default) the
+#' estimates and standard errors for each regression coefficient are pooled across
+#' studies using random effects meta-analysis under maximum likelihood (ML),
+#' restricted maximum likelihood (REML), or fixed effects meta-analysis (FE).
+#' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
+#' the default set of connections will be used: see \link{datashield.connections_default}.
+#' @return many of the elements of the output list returned by ds.lmeSLMA.o from
+#' each study separately are
+#' equivalent to those from lmer() in lme4 with potentially disclosive elements
+#' such as individual-level residuals and linear predictors blocked.
+#' The return results from each study appear first in the return list with one
+#' block of results from each study in the order they appear in datasources.
+#' As regards the elements within each study the most important
+#' elements are included last in the return list because they then appear at the
+#' bottom of a simple print out of the return object. In reverse order, these
+#' key elements in reverse order are:
+#' @return coefficients:- a matrix in which the first column contains the names of
+#' all of the regression parameters (coefficients) in the model, the second column
+#' contains the estimated values, the third their corresponding standard errors,
+#' the fourth the ratio of estimate/standard error and the fifth the p-value
+#' treating that as a standardised normal deviate
+
+
+
+#' @return CorrMatrix:- the correlation matrix of parameter estimates
+#' @return VarCovMatrix:- the variance covariance matrix of parameter estimates
+#' @return weights:- the vector (if any) holding regression weights
+#' @return offset:- the vector (if any) holding an offset (enters glm with a coefficient of 1.0)
+#' @return cov.scaled:- equivalent to VarCovMatrix
+#' @return Nmissing:- the number of missing observations in the given study
+#' @return Nvalid:- the number of valid (non-missing) observations in the given study
+#' @return Ntotal:- the total number of observations in the given study (Nvalid+Nmissing)
+#' @return data:- - equivalent to input parameter dataName (above)
+#' @return call:- - summary of key elements of the call to fit the model
+#' @return there are a small number of more esoteric items of information returned
+#' by ds.lmerSLMA.o. Additional information about these can be found in the help
+#' file for the lmer() function in the lme4 package.
+#' @return input.beta.matrix.for.SLMA:- a matrix containing the vector of coefficient
+#' estimates from each study. In combination with the corresponding standard errors
+#' (see input.se.matrix.for.SLMA) these can be imported directly into a study level
+#' meta-analysis (SLMA) package such as metafor to generate estimates pooled via SLMA
+#' @return input.se.matrix.for.SLMA:- a matrix containing the vector of standard error
+#' estimates for coefficients from each study. In combination with the coefficients
+#' (see input.beta.matrix.for.SLMA) these can be imported directly into a study level
+#' meta-analysis (SLMA) package such as metafor to generate estimates pooled via SLMA
+#' @return SLMA.pooled.estimates:- a matrix containing pooled estimates for each
+#' regression coefficient across all studies with pooling under SLMA via
+#' random effects meta-analysis under maximum likelihood (ML), restricted maximum
+#' likelihood (REML) or via fixed effects meta-analysis (FE)
 #' @author Tom Bishop
 #' @export
 ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.metafor=TRUE,dataName=NULL,
