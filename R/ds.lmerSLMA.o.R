@@ -84,7 +84,7 @@
 #' @author Tom Bishop
 #' @export
 ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.metafor=TRUE,dataName=NULL,
-                       checks=FALSE, maxit=15, datasources=NULL, REML=TRUE) {
+                       checks=FALSE, datasources=NULL, REML=TRUE) {
   
   # details are provided look for 'opal' objects in the environment
   if(is.null(datasources)){
