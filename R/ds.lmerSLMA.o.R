@@ -36,7 +36,12 @@
 #' restricted maximum likelihood (REML), or fixed effects meta-analysis (FE).
 #' @param datasources a list of \code{\link{DSConnection-class}} objects obtained after login. If the <datasources>
 #' the default set of connections will be used: see \link{datashield.connections_default}.
-#' @return many of the elements of the output list returned by ds.lmeSLMA.o from
+#' @param REML A boolean indicating whether REstricted Maximum Likelihood (REML) should be used for
+#' the parameter estimation criterion. This is useful for likelihood ratio tests when assessing the quality of the
+#' fixed effects portion of the model. The idea is to compare the models with and without the fixed effects to see
+#' if they are significantly different (e.g. using ANOVA). REML assumes that fixed effects structure is correct and
+#' so for this type of comparison, it should not be used.
+#' @return many of the elements of the output list returned by ds.lmerSLMA.o from
 #' each study separately are
 #' equivalent to those from lmer() in lme4 with potentially disclosive elements
 #' such as individual-level residuals and linear predictors blocked.
@@ -51,10 +56,7 @@
 #' contains the estimated values, the third their corresponding standard errors,
 #' the fourth the ratio of estimate/standard error and the fifth the p-value
 #' treating that as a standardised normal deviate
-
-
-
-#' @return CorrMatrix:- the correlation matrix of parameter estimates
+#' #' @return CorrMatrix:- the correlation matrix of parameter estimates
 #' @return VarCovMatrix:- the variance covariance matrix of parameter estimates
 #' @return weights:- the vector (if any) holding regression weights
 #' @return offset:- the vector (if any) holding an offset (enters glm with a coefficient of 1.0)
@@ -82,7 +84,7 @@
 #' @author Tom Bishop
 #' @export
 ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.metafor=TRUE,dataName=NULL,
-                       checks=FALSE, maxit=15, datasources=NULL) {
+                       checks=FALSE, maxit=15, datasources=NULL, REML=TRUE) {
   
   # details are provided look for 'opal' objects in the environment
   if(is.null(datasources)){
@@ -130,7 +132,7 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
   
   #NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
   
-  cally2 <- call('lmerSLMADS2.o', formula, offset, weights, dataName)
+  cally2 <- call('lmerSLMADS2.o', formula, offset, weights, dataName, REML)
   
   study.summary <- datashield.aggregate(datasources, cally2)
   
