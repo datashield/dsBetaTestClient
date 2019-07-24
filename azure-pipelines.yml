@@ -22,6 +22,14 @@ jobs:
 
 
   steps:
+  - bash:|
+      #branch: $(Build.SourceBranchName)
+      #repo: $(Build.Repository.Name)
+      #branch: $(Build.SourceBranchName)
+      #repo: $(Build.Repository.Name)
+      env
+    displayName: 'local vars'
+  
   - bash: |
       sudo service mysql stop
       sudo apt-get update
