@@ -27,6 +27,7 @@ connect.smk.dataset.sim(list("LAB_TSC"))
 context("ds.glm.o::arg::test errors")
 test_that("glm_erros", {
     expect_error(ds.glm.o(), " Please provide a valid regression formula!", fixed=TRUE)
+    expect_error(ds.glm.o("D$LAB_TSC~D$LAB_TSC"), " Please provide a valid 'family' argument!", fixed=TRUE)
 })
 
 #

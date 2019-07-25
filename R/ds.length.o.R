@@ -46,11 +46,11 @@
 ds.length.o = function(x=NULL, type='both', checks='FALSE', datasources=NULL){
   
   #####################################################################################
-  #MODULE 1: IDENTIFY DEFAULT OPALS  											                        		#
+  #MODULE 1: IDENTIFY DEFAULT OPALS                                                   #
   # if no opal login details are provided look for 'opal' objects in the environment  #
-  if(is.null(datasources)){														                               	#
-    datasources <- findLoginObjects()							                          					#
-  }																                                          					#						
+  if(is.null(datasources)){                                                           #
+    datasources <- findLoginObjects()                                                 #
+  }                                                                                   #
   ##################################################################################### 
   
   #####################################################################################
@@ -86,7 +86,7 @@ ds.length.o = function(x=NULL, type='both', checks='FALSE', datasources=NULL){
     # call the internal function that checks the input object is suitable in all studies        #
     typ <- checkClass(datasources, x)                                                      #
     # the input object must be a vector or a list
-    if(typ != 'character' & typ != 'factor' & typ != 'integer' & typ != 'logical' & typ != 'numeric' & typ != 'list'){
+    if(!('character' %in% typ) & !('factor' %in% typ) & !('integer' %in% typ) & !('logical' %in% typ) & !('numeric' %in% typ) & !('list' %in% typ)){
       stop("The input object must be a character, factor, integer, logical or numeric vector or a list.", call.=FALSE)
     }                                                                                         #
   }                                                                                             #

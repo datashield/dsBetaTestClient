@@ -27,6 +27,8 @@ connect.smk.dataset.sim(list("LAB_TSC"))
 context("ds.asFactor.o::arg::test errors")
 test_that("asFactor_erros", {
     expect_error(ds.asFactor.o(), "Please provide the name of the variable that is to be converted to a factor e.g. 'varname'", fixed=TRUE)
+    expect_error(ds.asFactor.o(input.var.name=1), "Please provide the name of the variable that is to be converted to a factor in character format e.g. 'varname'", fixed=TRUE)
+    expect_error(ds.asFactor.o(input.var.name=NA), "Please provide the name of the variable that is to be converted to a factor in character format e.g. 'varname'", fixed=TRUE)
 })
 
 #

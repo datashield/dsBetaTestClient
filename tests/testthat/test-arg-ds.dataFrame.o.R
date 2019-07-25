@@ -27,6 +27,9 @@ connect.smk.dataset.sim(list("LAB_TSC"))
 context("ds.dataFrame.o::arg::test errors")
 test_that("dataFrame_erros", {
     expect_error(ds.dataFrame.o(), "Please provide the name of the list that holds the input vectors!", fixed=TRUE)
+
+    ds.asList.o(x='D$A', newobj="as_list")
+    expect_error(ds.dataFrame.o("as_list", DataSHIELD.checks=TRUE), " Only objects of type 'data.frame', 'matrix', 'numeric', 'integer', 'character', 'factor' and 'logical' are allowed.", fixed=TRUE)
 })
 
 #

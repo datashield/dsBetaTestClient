@@ -24,7 +24,7 @@ connect.smk.dataset.sim(list("LAB_TSC"))
 # Tests
 #
 
-context("ds.matrixDet.o::arg::test errors")
+context("ds.matrixDet::arg::test errors")
 test_that("matrixDet_erros", {
     res <- ds.matrixDet()
 

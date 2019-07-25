@@ -13,7 +13,7 @@
 # Set up
 #
 
-# context("dsBetaTestClient::ds.var.o::args test")
+# context("dsBetaTestClient::ds.matrixDiag::args test")
 
 source("connection_to_datasets/init_all_datasets.R")
 source("connection_to_datasets/init_smk_datasets.R")
@@ -24,16 +24,16 @@ connect.smk.dataset.sim(list("LAB_TSC"))
 # Tests
 #
 
-context("ds.var.o::arg::test errors")
-test_that("var_erros", {
-    ds.asCharacter.o(x='D$LAB_TSC', newobj="not_a_numeric")
+context("ds.matrixDiag::arg::test errors")
+test_that("matrixDiag_erros", {
+    res <- ds.matrixDiag()
 
-    expect_error(ds.var.o(), "Please provide the name of the input vector!", fixed=TRUE)
-    expect_error(ds.var.o(x="not_a_numeric", checks=TRUE), "The input object must be an integer or a numeric vector.", fixed=TRUE)
+    expect_length(res, 1)
+    expect_equal(res, "Error: x1 must have a value which is a character string, a numeric vector or a scalar", fixed=TRUE)
 })
 
 #
 # Done
 #
 
-# context("dsBetaTestClient::ds.var.o::arg done")
+# context("dsBetaTestClient::ds.matrixDiag::arg done")

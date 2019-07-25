@@ -27,7 +27,8 @@ connect.smk.dataset.sim(list("LAB_TSC"))
 context("ds.dim.o::arg::test errors")
 test_that("dim_erros", {
     expect_error(ds.dim.o(), "Please provide a the name of a data.frame or matrix!", fixed=TRUE)
-    expect_error(ds.dim.o(check=TRUE), "Please provide a the name of a data.frame or matrix!", fixed=TRUE)
+    expect_error(ds.dim.o(x="F", checks = TRUE), "The input object must be a table structure!", fixed=TRUE)
+    expect_error(ds.dim.o(x="D", type = "other"), 'Function argument "type" has to be either "both", "combine" or "split"', fixed=TRUE)
 })
 
 #

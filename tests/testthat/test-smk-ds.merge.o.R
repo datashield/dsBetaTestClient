@@ -28,30 +28,22 @@ context("ds.merge.o::smk")
 
 test_that("simple test", {
     spec_vectors_1 <- c('D$LAB_TSC', 'D$LAB_HDL')
-    spec_vectors_2 <- c('D$LAB_TRIG', 'D$DIS_AMI')
+    spec_vectors_2 <- c('D$LAB_TSC', 'D$DIS_AMI')
     ds.dataFrame.o(x=spec_vectors_1, newobj="test_1_df")
     ds.dataFrame.o(x=spec_vectors_2, newobj="test_2_df")
 
-    print("====")
-    print(ds.ls(datasources=ds.test_env$connection.opal))
-    print("====") 
-
-    res <- ds.merge.o(x.name="test_1_df", y.name="test_2_df", by.x.names="LAB_TSC", by.y.names="LAB_TRIG", newobj="merge_newobj")
-
-    print("====")
-    print(res)
-    print("====") 
+    res <- ds.merge.o(x.name="test_1_df", y.name="test_2_df", by.x.names="D$LAB_TSC", by.y.names="D$LAB_TSC", newobj="merge_newobj")
 
     expect_length(res, 2)
     expect_equal(res$is.object.created, "A data object <merge_newobj> has been created in all specified data sources")
     expect_equal(res$validity.check, "<merge_newobj> appears valid in all sources")
 
-    new.res <- ds.class("merge_newobj", datasources=ds.test_env$connection.opal)
+    class.res <- ds.class("merge_newobj", datasources=ds.test_env$connection.opal)
 
-    expect_length(new.res, 3)
-    expect_equal(new.res$survival1, "numeric")
-    expect_equal(new.res$survival2, "numeric")
-    expect_equal(new.res$survival3, "numeric")
+    expect_length(class.res, 3)
+    expect_equal(class.res$sim1, "data.frame")
+    expect_equal(class.res$sim2, "data.frame")
+    expect_equal(class.res$sim3, "data.frame")
 })
 
 #

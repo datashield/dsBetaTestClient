@@ -71,7 +71,7 @@ ds.dim.o <- function(x=NULL, type='both', checks=FALSE, datasources=NULL) {
     # check if the input object(s) is(are) defined in all the studies                                    #
     defined <- isDefined(datasources, x)                                                                 #
     # throw a message and stop if input is not table structure                                           #
-    if(defined != TRUE){                                                                                 #
+    if(! defined){                                                                                       #
       stop("The input object is not defined in all studies!", call.=FALSE)                               #
     }                                                                                                    #
     # call the internal function that checks the input object is suitable in all studies                 #
@@ -85,7 +85,7 @@ ds.dim.o <- function(x=NULL, type='both', checks=FALSE, datasources=NULL) {
   
   
   ###################################################################################################
-  #MODULE: EXTEND "type" argument to include "both" and enable valid alisases                     #
+  #MODULE: EXTEND "type" argument to include "both" and enable valid alisases                       #
   if(type == 'combine' | type == 'combined' | type == 'combines' | type == 'c') type <- 'combine'   #
   if(type == 'split' | type == 'splits' | type == 's') type <- 'split'                              #
   if(type == 'both' | type == 'b' ) type <- 'both'                                                  #

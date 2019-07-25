@@ -60,12 +60,12 @@
 ds.mean.o <- function(x=NULL, type='split', checks=FALSE, save.mean.Nvalid=FALSE, datasources=NULL){
 
 #####################################################################################
-#MODULE 1: IDENTIFY DEFAULT OPALS  													#
+#MODULE 1: IDENTIFY DEFAULT OPALS                                                   #
   # if no opal login details are provided look for 'opal' objects in the environment#
-  if(is.null(datasources)){															#
-    datasources <- findLoginObjects()												#
-  }																					#						
-#####################################################################################  
+  if(is.null(datasources)){                                                         #
+    datasources <- findLoginObjects()                                               #
+  }                                                                                 #
+#####################################################################################
 
 #####################################################################################
 #MODULE 2: SET UP KEY VARIABLES ALLOWING FOR DIFFERENT INPUT FORMATS                #
@@ -79,7 +79,7 @@ ds.mean.o <- function(x=NULL, type='split', checks=FALSE, save.mean.Nvalid=FALSE
   varname <- xnames$elements                                                        #
   obj2lookfor <- xnames$holders                                                     #
 #####################################################################################
- 
+
 ###############################################################################################
 #MODULE 3: GENERIC OPTIONAL CHECKS TO ENSURE CONSISTENT STRUCTURE OF KEY VARIABLES            #
 #IN DIFFERENT SOURCES                                                                         #
@@ -99,7 +99,7 @@ ds.mean.o <- function(x=NULL, type='split', checks=FALSE, save.mean.Nvalid=FALSE
   # call the internal function that checks the input object is suitable in all studies        #
   varClass <- checkClass(datasources, x)                                                      #
   # the input object must be a numeric or an integer vector                                   #
-  if(varClass != 'integer' & varClass != 'numeric'){                                          #
+  if(!('integer' %in% varClass) & !('numeric' %in% varClass)){                                          #
     stop("The input object must be an integer or a numeric vector.", call.=FALSE)             #
   }                                                                                           #
 }                                                                                             #
@@ -116,25 +116,25 @@ if(type != 'combine' & type != 'split' & type != 'both')                        
 #MODIFY FUNCTION CODE TO DEAL WITH ALL THREE TYPES                                                #
 ###################################################################################################
 
-  
+
   cally <- paste0("meanDS.o(", x, ")")
   ss.obj <- opal::datashield.aggregate(datasources, as.symbol(cally))
-  
+
   Nstudies <- length(datasources)
-    ss.mat <- matrix(as.numeric(matrix(unlist(ss.obj),nrow=Nstudies,byrow=TRUE)[,1:4]),nrow=Nstudies)
-    dimnames(ss.mat) <- c(list(names(ss.obj),names(ss.obj[[1]])[1:4]))
+  ss.mat <- matrix(as.numeric(matrix(unlist(ss.obj),nrow=Nstudies,byrow=TRUE)[,1:4]),nrow=Nstudies)
+  dimnames(ss.mat) <- c(list(names(ss.obj),names(ss.obj[[1]])[1:4]))
 
-	ValidityMessage.mat <- matrix(matrix(unlist(ss.obj),nrow=Nstudies,byrow=TRUE)[,5],nrow=Nstudies)
-	dimnames(ValidityMessage.mat) <- c(list(names(ss.obj),names(ss.obj[[1]])[5]))
-	
-	ss.mat.combined <- t(matrix(ss.mat[1,]))
+  ValidityMessage.mat <- matrix(matrix(unlist(ss.obj),nrow=Nstudies,byrow=TRUE)[,5],nrow=Nstudies)
+  dimnames(ValidityMessage.mat) <- c(list(names(ss.obj),names(ss.obj[[1]])[5]))
 
-	ss.mat.combined[1,1] <- (t(matrix(ss.mat[,3]))%*%ss.mat[,1])/sum(ss.mat[,3])
-	ss.mat.combined[1,2] <- sum(ss.mat[,2])
-	ss.mat.combined[1,3] <- sum(ss.mat[,3])
-	ss.mat.combined[1,4] <- sum(ss.mat[,4])
+  ss.mat.combined <- t(matrix(ss.mat[1,]))
 
-	dimnames(ss.mat.combined) <- c(list("studiesCombined"),list(names(ss.obj[[1]])[1:4]))
+  ss.mat.combined[1,1] <- (t(matrix(ss.mat[,3]))%*%ss.mat[,1])/sum(ss.mat[,3])
+  ss.mat.combined[1,2] <- sum(ss.mat[,2])
+  ss.mat.combined[1,3] <- sum(ss.mat[,3])
+  ss.mat.combined[1,4] <- sum(ss.mat[,4])
+
+  dimnames(ss.mat.combined) <- c(list("studiesCombined"),list(names(ss.obj[[1]])[1:4]))
 
   # IF save.mean.Nvalid==TRUE - KEY STUDY SPECIFIC STATISTICS ON APPROPRIATE OPAL SERVERS WITH ASSIGN FUNCTION
   if(save.mean.Nvalid==TRUE){
@@ -166,20 +166,20 @@ if(type != 'combine' & type != 'split' & type != 'both')                        
     key.defined <- isDefined(datasources, key.obj2lookfor)                  #
   }                                                                         #
                                                                             #
-if(key.defined==TRUE){                                                      #
-print("Data object <mean.all.studies> created successfully in all sources") #
-}                                                                           #
+#if(key.defined==TRUE){                                                      #
+#print("Data object <mean.all.studies> created successfully in all sources") #
+#}                                                                           #
 #############################################################################
 }
-  
+
 #PRIMARY FUNCTION OUTPUT SUMMARISE RESULTS FROM
 #AGGREGATE FUNCTION AND RETURN TO CLIENT-SIDE
   if (type=='split'){
-  	return(list(Mean.by.Study=ss.mat,Nstudies=Nstudies,ValidityMessage=ValidityMessage.mat))
+    return(list(Mean.by.Study=ss.mat,Nstudies=Nstudies,ValidityMessage=ValidityMessage.mat))
   }
 
   if (type=="combine") {
-	return(list(Global.Mean=ss.mat.combined,Nstudies=Nstudies,ValidityMessage=ValidityMessage.mat))
+    return(list(Global.Mean=ss.mat.combined,Nstudies=Nstudies,ValidityMessage=ValidityMessage.mat))
   }
 
   if (type=="both") {
