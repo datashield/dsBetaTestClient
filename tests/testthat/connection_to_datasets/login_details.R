@@ -28,7 +28,8 @@ ds.test_env <- new.env()
   ds.test_env$password_1 <- "datashield_test&"
   ds.test_env$password_2 <- "datashield_test&"
   ds.test_env$password_3 <- "datashield_test&"
+
+
+  
+
   ds.test_env$secure_login_details = TRUE
-
-
-

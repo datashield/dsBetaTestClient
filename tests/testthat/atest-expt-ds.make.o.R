@@ -5,18 +5,18 @@ source("definition_tests/def-assign-stats.R")
 
 context("ds.make.o()::expt::copy_transform:single")
 test_that("copy and transform", 
-          {
-            connect.dataset.1()
-            constant.value <- sample(1:200,1)
-            .test.copy.apply.operator('D$INTEGER',constant.value,'NUMERIC_created',"+",some.values = ds.test_env$local.values.1[,6], result.local = (ds.test_env$local.values.1[,6] + constant.value))
-            .test.copy.apply.operator('D$NON_NEGATIVE_INTEGER',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,7],result.local = (ds.test_env$local.values[,7] * constant.value))
-            .test.copy.apply.operator('D$POSITIVE_INTEGER',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,8],result.local = (ds.test_env$local.values[,8] * constant.value))
-            .test.copy.apply.operator('D$NEGATIVE_INTEGER',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,9],result.local = (ds.test_env$local.values[,9] * constant.value))
-            .test.copy.apply.operator('D$NUMERIC',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,10],result.local = (ds.test_env$local.values[,10] * constant.value))
-            .test.copy.apply.operator('D$NON_NEGATIVE_NUMERIC',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,11],result.local = (ds.test_env$local.values[,11] * constant.value))
-            .test.copy.apply.operator('D$POSITIVE_NUMERIC',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,12],result.local = (ds.test_env$local.values[,12] * constant.value))
-            .test.copy.apply.operator('D$NEGATIVE_NUMERIC',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,13],result.local = (ds.test_env$local.values[,13] * constant.value))
-          })
+{
+  connect.dataset.1()
+  constant.value <- sample(1:200,1)
+  .test.copy.apply.operator('D$INTEGER',constant.value,'NUMERIC_created',"+",some.values = ds.test_env$local.values.1[,6], result.local = (ds.test_env$local.values.1[,6] + constant.value))
+  .test.copy.apply.operator('D$NON_NEGATIVE_INTEGER',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,7],result.local = (ds.test_env$local.values[,7] * constant.value))
+  .test.copy.apply.operator('D$POSITIVE_INTEGER',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,8],result.local = (ds.test_env$local.values[,8] * constant.value))
+  .test.copy.apply.operator('D$NEGATIVE_INTEGER',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,9],result.local = (ds.test_env$local.values[,9] * constant.value))
+  .test.copy.apply.operator('D$NUMERIC',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,10],result.local = (ds.test_env$local.values[,10] * constant.value))
+  .test.copy.apply.operator('D$NON_NEGATIVE_NUMERIC',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,11],result.local = (ds.test_env$local.values[,11] * constant.value))
+  .test.copy.apply.operator('D$POSITIVE_NUMERIC',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,12],result.local = (ds.test_env$local.values[,12] * constant.value))
+  .test.copy.apply.operator('D$NEGATIVE_NUMERIC',constant.value,'NUMERIC_created',"*",some.values = ds.test_env$local.values.1[,13],result.local = (ds.test_env$local.values[,13] * constant.value))
+})
 
 
 

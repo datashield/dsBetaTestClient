@@ -10,6 +10,13 @@ load.libraries <- function()
     install.packages('dsBase',repos='http://cran.obiba.org')
     library('dsBase')
   }
+  
+  package.loaded = require('dsBaseClient')
+  if (!package.loaded)
+  {
+    install.packages('dsBaseClient',repos='http://cran.obiba.org')
+    library('dsBase')
+  }
 
   print('dsModelling')
   package.loaded = require('dsModelling')

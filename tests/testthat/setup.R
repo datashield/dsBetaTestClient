@@ -16,11 +16,9 @@ library(dsBaseClient)
 library(RCurl)
 
 
-
-
 source("connection_to_datasets/login_details.R")
 source("connection_to_datasets/init_all_datasets.R")
-source("libraries/load_libraries.R")
+#source("libraries/load_libraries.R")
 
 
 init.all.datasets()

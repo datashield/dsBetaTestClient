@@ -2,12 +2,13 @@
 
 init.all.datasets <- function()
 {
+  log.out.data.server()
   if (ds.test_env$secure_login_details)
   {
     #reading data from local files 
-    ds.test_env$local.values.1 <- read.csv("data_files/data_set_1.csv", header = TRUE)
-    ds.test_env$local.values.2 <- read.csv("data_files/data_set_2.csv", header = TRUE)
-    ds.test_env$local.values.3 <- read.csv("data_files/data_set_3.csv", header = TRUE)
+    ds.test_env$local.values.1 <- read.csv("data_files/DATASET1.csv", header = TRUE)
+    ds.test_env$local.values.2 <- read.csv("data_files/DATASET2.csv", header = TRUE)
+    ds.test_env$local.values.3 <- read.csv("data_files/DATASET3.csv", header = TRUE)
     ds.test_env$local.values   <- rbind(ds.test_env$local.values.1,ds.test_env$local.values.2,ds.test_env$local.values.3)
 
     #connecting to the servers
@@ -21,23 +22,24 @@ init.all.datasets <- function()
                                                               ds.test_env$table,
                                                               ds.test_env$user,
                                                               ds.test_env$password)
-
+    
     ds.test_env$stats.var <- list('ID','CHARACTER', 'LOGICAL','NA_VALUES','INTEGER','NULL_VALUES',
                                   'NON_NEGATIVE_INTEGER','POSITIVE_INTEGER','NEGATIVE_INTEGER',
                                   'NUMERIC', 'NON_NEGATIVE_NUMERIC','POSITIVE_NUMERIC','NEGATIVE_NUMERIC','FACTOR_CHARACTER', 
-                                  'FACTOR_INTEGER')
-
+                                  'FACTOR_INTEGER','IDENTIFIER','CATEGORY','IDENTIFIER','CATEGORY')
 
     
+ 
   }
 }
 
 init.dataset.3 <- function()
 {
+  log.out.data.server()
   if (ds.test_env$secure_login_details)
   {
 
-    ds.test_env$local.values.3 <- read.csv("data_files/data_set_3.csv", header = TRUE)
+    ds.test_env$local.values.3 <- read.csv("data_files/DATASET3.csv", header = TRUE)
     
     
     ds.test_env$server <- c("study3")
@@ -54,16 +56,19 @@ init.dataset.3 <- function()
     ds.test_env$stats.var <- list('ID','CHARACTER', 'LOGICAL','NA_VALUES','INTEGER','NULL_VALUES',
                                   'NON_NEGATIVE_INTEGER','POSITIVE_INTEGER','NEGATIVE_INTEGER',
                                   'NUMERIC', 'NON_NEGATIVE_NUMERIC','POSITIVE_NUMERIC','NEGATIVE_NUMERIC','FACTOR_CHARACTER', 
-                                  'FACTOR_INTEGER')
+                                  'FACTOR_INTEGER','IDENTIFIER','CATEGORY','IDENTIFIER','CATEGORY')
+    
+  
   }
 }
 
 
 init.dataset.2 <- function()
 {
+  log.out.data.server()
   if (ds.test_env$secure_login_details)
   {
-    ds.test_env$local.values.2 <- read.csv("data_files/data_set_2.csv", header = TRUE)
+    ds.test_env$local.values.2 <- read.csv("data_files/DATASET2.csv", header = TRUE)
     
     
     ds.test_env$server <- c("study2")
@@ -80,17 +85,20 @@ init.dataset.2 <- function()
     ds.test_env$stats.var <- list('ID','CHARACTER', 'LOGICAL','NA_VALUES','INTEGER','NULL_VALUES',
                                   'NON_NEGATIVE_INTEGER','POSITIVE_INTEGER','NEGATIVE_INTEGER',
                                   'NUMERIC', 'NON_NEGATIVE_NUMERIC','POSITIVE_NUMERIC','NEGATIVE_NUMERIC','FACTOR_CHARACTER', 
-                                  'FACTOR_INTEGER')
+                                  'FACTOR_INTEGER','IDENTIFIER','CATEGORY','IDENTIFIER','CATEGORY')
+    
+   
   }
 }
 
 
 init.dataset.1 <- function()
 {
+  log.out.data.server()
   if (ds.test_env$secure_login_details)
   {
 
-    ds.test_env$local.values.1 <- read.csv("data_files/data_set_1.csv", header = TRUE)
+    ds.test_env$local.values.1 <- read.csv("data_files/DATASET1.csv", header = TRUE)
     
     
     ds.test_env$server <- c("study1")
@@ -107,7 +115,9 @@ init.dataset.1 <- function()
     ds.test_env$stats.var <- list('ID','CHARACTER', 'LOGICAL','NA_VALUES','INTEGER','NULL_VALUES',
                                   'NON_NEGATIVE_INTEGER','POSITIVE_INTEGER','NEGATIVE_INTEGER',
                                   'NUMERIC', 'NON_NEGATIVE_NUMERIC','POSITIVE_NUMERIC','NEGATIVE_NUMERIC','FACTOR_CHARACTER', 
-                                  'FACTOR_INTEGER')
+                                  'FACTOR_INTEGER','IDENTIFIER','CATEGORY','IDENTIFIER','CATEGORY')
+    
+    
   }
 }
 
