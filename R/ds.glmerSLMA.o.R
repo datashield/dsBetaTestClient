@@ -4,8 +4,8 @@
 #' @details Fits a thing
 
 #' @export
-ds.glmerSLMA.o<-function(formula=NULL, family=NULL, offset=NULL, weights=NULL, combine.with.metafor=TRUE,dataName=NULL,
-                       checks=FALSE, maxit=15, datasources=NULL) {
+ds.glmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, family, combine.with.metafor=TRUE,dataName=NULL,
+                         checks=FALSE, datasources=NULL, nAGQ=1) {
   
   # details are provided look for 'opal' objects in the environment
   if(is.null(datasources)){
@@ -32,12 +32,6 @@ ds.glmerSLMA.o<-function(formula=NULL, family=NULL, offset=NULL, weights=NULL, c
   
   formula <- as.formula(formula)
   
-  
-  # check that 'family' was set
-  if(is.null(family)){
-    stop(" Please provide a valid 'family' argument!", call.=FALSE)
-  }
-  
   # if the argument 'dataName' is set, check that the data frame is defined (i.e. exists) on the server site
   if(!(is.null(dataName))){
     defined <- isDefined(datasources, dataName)
@@ -53,138 +47,61 @@ ds.glmerSLMA.o<-function(formula=NULL, family=NULL, offset=NULL, weights=NULL, c
     #message("WARNING:'checks' is set to FALSE; variables in the model are not checked and error messages may not be intelligible!")
   }
   
-  #MOVE ITERATION COUNT BEFORE ASSIGNMENT OF beta.vect.next
-  #Iterations need to be counted. Start off with the count at 0
-  #and increment by 1 at each new iteration
-  #iteration.count<-0
-  
-  # number of 'valid' studies (those that passed the checks) and vector of beta values
-  numstudies <- length(datasources)
-  
-  
-  #ARBITRARY LENGTH FOR START BETAs AT THIS STAGE BUT IN LEGAL TRANSMISSION FORMAT ("0,0,0,0,0")
-  #beta.vect.next <- rep(0,5)
-  #beta.vect.temp <- paste0(as.character(beta.vect.next), collapse=",")
-  
-  
-  #IDENTIFY THE CORRECT DIMENSION FOR START BETAs VIA CALLING FIRST COMPONENT OF glmDS
-  
-  #cally1 <- call('glmDS1.o', formula, family, weights, dataName)
-  
-  #study.summary.0 <- datashield.aggregate(datasources, cally1)
-  
-  
-  # at.least.one.study.data.error<-0
-  # 
-  # for(hh in 1:numstudies) {
-  #   if(study.summary.0[[hh]]$errorMessage!="No errors"){
-  #     at.least.one.study.data.error<-1
-  #   }
-  # }
-  # 
-  # 
-  # num.par.glm<-NULL
-  # coef.names<-NULL
-  # 
-  # if(at.least.one.study.data.error==0){
-  #   num.par.glm<-study.summary.0[[1]][[1]][[2]]
-  #   coef.names<-study.summary.0[[1]][[2]]
-  # }
-  # 
-  # y.invalid<-NULL
-  # Xpar.invalid<-NULL
-  # w.invalid<-NULL
-  # glm.saturation.invalid<-NULL
-  # errorMessage<-NULL
-  # 
-  # for(ss in 1:numstudies)
-  # {
-  #   y.invalid<-c(y.invalid,study.summary.0[[ss]][[3]])
-  #   Xpar.invalid<-rbind(Xpar.invalid,study.summary.0[[ss]][[4]])
-  #   w.invalid<-c(w.invalid,study.summary.0[[ss]][[5]])
-  #   glm.saturation.invalid <-c(glm.saturation.invalid,study.summary.0[[ss]][[6]])
-  #   errorMessage<-c(errorMessage,study.summary.0[[ss]][[7]])
-  # }
-  # 
-  # y.invalid<-as.matrix(y.invalid)
-  # sum.y.invalid<-sum(y.invalid)
-  # dimnames(y.invalid)<-list(names(datasources),"Y VECTOR")
-  # 
-  # Xpar.invalid<-as.matrix(Xpar.invalid)
-  # sum.Xpar.invalid<-sum(Xpar.invalid)
-  # dimnames(Xpar.invalid)<-list(names(datasources),coef.names)
-  # 
-  # 
-  # w.invalid<-as.matrix(w.invalid)
-  # sum.w.invalid<-sum(w.invalid)
-  # dimnames(w.invalid)<-list(names(datasources),"WEIGHT VECTOR")
-  # 
-  # glm.saturation.invalid<-as.matrix(glm.saturation.invalid)
-  # sum.glm.saturation.invalid<-sum(glm.saturation.invalid)
-  # dimnames(glm.saturation.invalid)<-list(names(datasources),"MODEL OVERPARAMETERIZED")
-  # 
-  # errorMessage<-as.matrix(errorMessage)
-  # dimnames(errorMessage)<-list(names(datasources),"ERROR MESSAGES")
-  # 
-  # 
-  # 
-  # output.blocked.information.1<-"MODEL FITTING TERMINATED AT FIRST ITERATION:"
-  # output.blocked.information.2<-"ANY VALUES OF 1 IN THE FOLLOWING TABLES DENOTE"
-  # output.blocked.information.3<-"POTENTIAL DISCLOSURE RISKS. PLEASE USE THE ARGUMENT"
-  # output.blocked.information.4<-"[datasources=] TO EXCLUDE STUDIES WITH DATA ERRORS"
-  # 
-  # 
-  # 
-  # 
-  # if(sum.y.invalid>0||sum.Xpar.invalid>0||sum.w.invalid>0||sum.glm.saturation.invalid>0||at.least.one.study.data.error==1){
-  #   return(list(
-  #     output.blocked.information.1,
-  #     output.blocked.information.2,
-  #     output.blocked.information.3,
-  #     output.blocked.information.4,
-  #     y.vector.error=y.invalid,
-  #     X.matrix.error=Xpar.invalid,
-  #     weight.vector.error=w.invalid,
-  #     glm.overparameterized=glm.saturation.invalid,
-  #     errorMessage=errorMessage
-  #   ))
-  #   stop("DATA ERROR")
-  # }
-  # 
-  # 
-  # 
-  # beta.vect.next <- rep(0,num.par.glm)
-  # beta.vect.temp <- paste0(as.character(beta.vect.next), collapse=",")
-  
-  
-  #Provide arbitrary starting value for deviance to enable subsequent calculation of the
-  #change in deviance between iterations
-  #dev.old<-9.99e+99
-  
-  #Convergence state needs to be monitored.
-  #converge.state<-FALSE
-  
-  #Define a convergence criterion. This value of epsilon corresponds to that used
-  #by default for GLMs in R (see section S3 for details)
-  #epsilon<-1.0e-08
-  
-  #f<-NULL
   
   #NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
   
-  cally2 <- call('glmerSLMADS2.o', formula, family, offset, weights, dataName)
-  
+  cally2 <- call('glmerSLMADS2.o', formula, family, offset, weights, dataName, nAGQ)
+
   study.summary <- datashield.aggregate(datasources, cally2)
   
   numstudies<-length(datasources)
   
-  # for(j in 1:numstudies){
-  #   inv.diag.se<-1/sqrt(diag(study.summary[[j]]$cov.scaled))
-  #   
-  #   cor.matrix<-t(diag(inv.diag.se))%*%study.summary[[j]]$cov.scaled%*%(diag(inv.diag.se))
-  #   study.summary[[j]]$VarCovMatrix<-study.summary[[j]]$cov.scaled
-  #   study.summary[[j]]$CorrMatrix<-cor.matrix
-  # }
+  #INTEGRATE RETURNED OUTPUT
+  .select <- function(l, field) {
+    lapply(l, function(obj) {obj[[field]]})
+  }
+  
+  disclosure.risk.total<-Reduce(f="+", .select(study.summary, 'disclosure.risk'))
+  
+  disclosure.risk<-NULL
+  errorMessage<-NULL
+  
+  for(ss in 1:numstudies){
+    disclosure.risk<-c(disclosure.risk,study.summary[[ss]]$disclosure.risk)
+    errorMessage<-c(errorMessage,study.summary[[ss]]$errorMessage)
+  }
+  
+  disclosure.risk<-as.matrix(disclosure.risk)
+  dimnames(disclosure.risk)<-list(names(datasources),"RISK OF DISCLOSURE")
+  
+  
+  errorMessage<-as.matrix(errorMessage)
+  dimnames(errorMessage)<-list(names(datasources),"ERROR MESSAGES")
+  
+  if(disclosure.risk.total>0){
+    message("DISCLOSURE RISK IN y.vect, X.mat OR w.vect \nOR MODEL OVERPARAMETERIZED IN AT LEAST ONE STUDY")
+    output.blocked.information.1<-"POTENTIAL DISCLOSURE RISK IN y.vect, X.mat OR w.vect"
+    output.blocked.information.2<-"OR MODEL OVERPARAMETERIZED IN AT LEAST ONE STUDY."
+    output.blocked.information.3<-"FURTHERMORE, CLIENTSIDE FUNCTION MAY HAVE BEEN MODIFIED"
+    output.blocked.information.4<-"SO SCORE VECTOR AND INFORMATION MATRIX DESTROYED IN ALL AT-RISK STUDIES"
+    
+    return(list(output.blocked.information.1,
+                output.blocked.information.2,
+                output.blocked.information.3,
+                output.blocked.information.4
+    ))
+  }
+  
+  for(j in 1:numstudies){
+    inv.diag.se<-1/sqrt(Matrix::diag(study.summary[[j]]$cov.scaled))
+    
+    cor.matrix<-t(diag(inv.diag.se))%*%study.summary[[j]]$cov.scaled%*%(diag(inv.diag.se))
+    cor.matrix@Dimnames = study.summary[[j]]$cov.scaled@Dimnames
+    study.summary[[j]]$VarCovMatrix<-study.summary[[j]]$cov.scaled
+    study.summary[[j]]$CorrMatrix<-cor.matrix
+    study.summary[[j]]$RE<-as.data.frame(study.summary[[j]]$RE)
+    
+  }
   
   
   #ARRANGE betas AND ses AS RETURN OBJECTS TO FEED EASILY
@@ -196,64 +113,64 @@ ds.glmerSLMA.o<-function(formula=NULL, family=NULL, offset=NULL, weights=NULL, c
   #HAVE ENOUGH ROWS TO FIT THE MAXIMUM LENGTH
   
   
-  # numcoefficients.max<-0
-  # 
-  # for(g in 1:numstudies){
-  #   if(length(study.summary[[g]]$coefficients[,1])>numcoefficients.max){
-  #     numcoefficients.max<-length(study.summary[[g]]$coefficients[,1])
-  #   }
-  # }
-  # 
-  # numcoefficients<-numcoefficients.max
-  # 
-  # betamatrix<-matrix(NA,nrow<-numcoefficients,ncol=numstudies)
-  # sematrix<-matrix(NA,nrow<-numcoefficients,ncol=numstudies)
-  # 
-  # 
-  # for(k in 1:numstudies){
-  #   betamatrix[,k]<-study.summary[[k]]$coefficients[,1]
-  #   sematrix[,k]<-study.summary[[k]]$coefficients[,2]
-  # }
-  # 
-  # ################################################
-  # #ANNOTATE OUTPUT MATRICES WITH STUDY INDICATORS#
-  # ################################################
-  # 
-  # study.names.list<-NULL
-  # betas.study.names.list<-NULL
-  # ses.study.names.list<-NULL
-  # 
-  # for(v in 1:numstudies){
-  #   
-  #   study.names.list<-c(study.names.list,paste0("study",as.character(v)))
-  #   betas.study.names.list<-c(betas.study.names.list,paste0("betas study ",as.character(v)))
-  #   ses.study.names.list<-c(ses.study.names.list,paste0("ses study ",as.character(v)))
-  # }
-  # 
-  # dimnames(betamatrix)<-list(dimnames(study.summary[[1]]$coefficients)[[1]], betas.study.names.list)
-  # dimnames(sematrix)<-list(dimnames(study.summary[[1]]$coefficients)[[1]], ses.study.names.list)
-  # 
-  # output.summary.text<-paste0("list(")
-  # 
-  # for(u in 1:numstudies){
-  #   output.summary.text<-paste0(output.summary.text,"study",as.character(u),"=study.summary[[",as.character(u),"]],"," ")
-  # }
-  # 
-  # output.summary.text.save<-output.summary.text
-  # output.summary.text<-paste0(output.summary.text,"input.beta.matrix.for.SLMA=as.matrix(betamatrix),input.se.matrix.for.SLMA=as.matrix(sematrix))")
-  # 
-  # 
-  # output.summary<-eval(parse(text=output.summary.text))
-  # #######################END OF ANNOTATION CODE
-  # 
-  # SLMA.pooled.ests.matrix<-matrix(NA,nrow<-numcoefficients,ncol=6)
-  # 
-  # 
-  # if(!combine.with.metafor){
-  #   return(output.summary)
-  # }
-  # 
-  # 
+  numcoefficients.max<-0
+  
+  for(g in 1:numstudies){
+    if(length(study.summary[[g]]$coefficients[,1])>numcoefficients.max){
+      numcoefficients.max<-length(study.summary[[g]]$coefficients[,1])
+    }
+  }
+  
+  numcoefficients<-numcoefficients.max
+  
+  betamatrix<-matrix(NA,nrow<-numcoefficients,ncol=numstudies)
+  sematrix<-matrix(NA,nrow<-numcoefficients,ncol=numstudies)
+  
+  
+  for(k in 1:numstudies){
+    betamatrix[,k]<-study.summary[[k]]$coefficients[,1]
+    sematrix[,k]<-study.summary[[k]]$coefficients[,2]
+  }
+  
+  ################################################
+  #ANNOTATE OUTPUT MATRICES WITH STUDY INDICATORS#
+  ################################################
+  
+  study.names.list<-NULL
+  betas.study.names.list<-NULL
+  ses.study.names.list<-NULL
+  
+  for(v in 1:numstudies){
+    
+    study.names.list<-c(study.names.list,paste0("study",as.character(v)))
+    betas.study.names.list<-c(betas.study.names.list,paste0("betas study ",as.character(v)))
+    ses.study.names.list<-c(ses.study.names.list,paste0("ses study ",as.character(v)))
+  }
+  
+  dimnames(betamatrix)<-list(dimnames(study.summary[[1]]$coefficients)[[1]], betas.study.names.list)
+  dimnames(sematrix)<-list(dimnames(study.summary[[1]]$coefficients)[[1]], ses.study.names.list)
+  
+  output.summary.text<-paste0("list(")
+  
+  for(u in 1:numstudies){
+    output.summary.text<-paste0(output.summary.text,"study",as.character(u),"=study.summary[[",as.character(u),"]],"," ")
+  }
+  
+  output.summary.text.save<-output.summary.text
+  output.summary.text<-paste0(output.summary.text,"input.beta.matrix.for.SLMA=as.matrix(betamatrix),input.se.matrix.for.SLMA=as.matrix(sematrix))")
+  
+  
+  output.summary<-eval(parse(text=output.summary.text))
+  #######################END OF ANNOTATION CODE
+  
+  SLMA.pooled.ests.matrix<-matrix(NA,nrow<-numcoefficients,ncol=6)
+  
+  
+  if(!combine.with.metafor){
+    return(output.summary)
+  }
+  
+  
   # #IF combine.with.metafor == TRUE, FIRST CHECK THAT THE MODELS IN EACH STUDY MATCH
   # #IF THERE ARE DIFFERENT NUMBERS OF PARAMETERS THE ANALYST WILL
   # #HAVE TO USE THE RETURNED MATRICES FOR betas AND ses TO DETERMINE WHETHER
@@ -302,8 +219,8 @@ ds.glmerSLMA.o<-function(formula=NULL, family=NULL, offset=NULL, weights=NULL, c
   # output.summary.plus.pooled.SLMA<-eval(parse(text=output.summary.plus.pooled.SLMA.text))
   # 
   # 
-  # return(output.summary.plus.pooled.SLMA)
-  return(study.summary)
+  #  return(output.summary.plus.pooled.SLMA)
+  #return(study.summary)
 }
 
 # ds.glmerSLMA.o

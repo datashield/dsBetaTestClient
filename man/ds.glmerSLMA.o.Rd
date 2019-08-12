@@ -4,9 +4,9 @@
 \alias{ds.glmerSLMA.o}
 \title{ds.glmSLMA.o calling glmDS1.o, glmSLMADS2.o}
 \usage{
-ds.glmerSLMA.o(formula = NULL, family = NULL, offset = NULL,
-  weights = NULL, combine.with.metafor = TRUE, dataName = NULL,
-  checks = FALSE, maxit = 15, datasources = NULL)
+ds.glmerSLMA.o(formula = NULL, offset = NULL, weights = NULL, family,
+  combine.with.metafor = TRUE, dataName = NULL, checks = FALSE,
+  datasources = NULL, nAGQ = 1)
 }
 \description{
 Fits a generalized linear model (glm) on data from a single or multiple sources
