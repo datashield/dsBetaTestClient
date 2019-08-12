@@ -1,5 +1,10 @@
+# Purpose: This script provides all the functions to connect to testing data. The latter are stored 
+# in data_files folder of test_that and on the virtual machine as TESTING.DATASET1, TESTING.DATASET2, 
+# TESTING.DATASET3.
+# Author: Patricia Ryser-Welch, DataSHIELD team
 
-
+# Connect to three servers and the three datasets. Four local variables named ds.test_env$local.values.1,
+# ds.test_env$local.values.2, ds.test_env$local.values.3 and ds.test_env$local.values are created.
 init.all.datasets <- function()
 {
   log.out.data.server()
@@ -33,6 +38,7 @@ init.all.datasets <- function()
   }
 }
 
+# Connect to one server and the three datasets. One local variables named ds.test_env$local.values.3 is created.
 init.dataset.3 <- function()
 {
   log.out.data.server()
@@ -62,7 +68,7 @@ init.dataset.3 <- function()
   }
 }
 
-
+# Connect to one server and the three datasets. One local variables named ds.test_env$local.values.2 is created.
 init.dataset.2 <- function()
 {
   log.out.data.server()
@@ -91,7 +97,7 @@ init.dataset.2 <- function()
   }
 }
 
-
+# Connect to one server and the three datasets. One local variables named ds.test_env$local.values.2is created.
 init.dataset.1 <- function()
 {
   log.out.data.server()

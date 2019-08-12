@@ -108,3 +108,10 @@ source("definition_tests/def-assign-stats.R")
   #comparison
   expect_equal(scale, var.changes[[1]][1], tolerance = ds.test_env$tolerance)
 }
+
+.test.large.vectors  <- function(dist.name, size)
+{
+  ds.rPois.o(samp.size = size, lambda = c(50), newobj=dist.name,datasources=ds.test_env$connection.opal)
+  var.changes <- ds.var.o(dist.name,type='combine', check=TRUE, datasources=ds.test_env$connection.opal)
+  expect_false(is.na(var.changes[[1]][1]))
+}

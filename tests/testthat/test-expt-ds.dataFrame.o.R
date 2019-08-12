@@ -76,7 +76,7 @@ test_that('numeric data',
 context('ds.dataFrame.o()::expt::several_objects::multiple')
 test_that('several objects',
 {
-  connet.all.datasets()
+  connect.all.datasets()
   .test.data.frame.from.different.objects("multiple_df")
 })
 

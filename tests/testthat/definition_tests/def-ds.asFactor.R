@@ -3,7 +3,6 @@ source("definition_tests/def-assign-stats.R")
 
 .find.factors.locally <- function(some.local.values)
 {
-  
   levels <- list(levels(as.factor(some.local.values)))
   vector <- as.numeric(unlist(levels))
   return(vector)

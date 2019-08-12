@@ -1,3 +1,4 @@
+source("definition_tests/def-assign-stats.R")
 
 .test.basic.expectation <- function(size,variable.created)
 {
@@ -93,16 +94,57 @@
   }
 }
 
-.test.lambdas <- function(size, variable.created, lambdas)
+.test.too.negative.seed <- function()
 {
-  seed <- as.integer(as.POSIXct(Sys.time(), "GMT"))/1000
-
-  ds.rPois.o(samp.size = size, lambda = c(10,10,10),  seed.as.integer = seed,newobj=variable.created, datasources=ds.test_env$connection.opal)
+  seed <- -100
  
-  sample.size <- ds.length(variable.created, type = "split", datasources=ds.test_env$connection.opal)
-    
-  for(index in 1:length(sample.size))
-  {
-    expect_true(sample.size[[index]] == lamgdas[i])
-  }
+  expect_warning(ds.rPois.o(samp.size = size,
+             newobj=variable.created, 
+                            seed.as.integer = seed,
+                            return.full.seed.as.set = FALSE,
+                            datasources=ds.test_env$connection.opal))
+  
+}
+
+
+.test.dispersions.stats.same.distribution <- function(seed.first.dist,lambda.first.dist, seed.second.dist, lambda.second.dist)
+{
+  size <- 20000
+  #create distribution on the server
+  ds.rPois.o(samp.size = size, lambda = lambda.first.dist, newobj="first.dist",seed.as.integer = seed.first.dist,datasources=ds.test_env$connection.opal)
+  ds.rPois.o(samp.size = size, lambda = lambda.second.dist, newobj="second.dist",seed.as.integer = seed.second.dist,datasources=ds.test_env$connection.opal)
+  
+  errors <- .compute.errors.between.distributions("first.dist","second.dist",size)
+ 
+  #test
+  expect_equal(errors[ds.test_env$MEAN],0, tolerance = ds.test_env$tolerance)
+  expect_equal(errors[ds.test_env$VARIANCE],0, tolerance = ds.test_env$tolerance)
+}
+
+.test.dispersions.stats.diff.distribution <- function(seed.first.dist,lambda.first.dist, seed.second.dist, lambda.second.dist)
+{
+  
+  size <- 20000
+  
+  #create distribution on the server
+  ds.rPois.o(samp.size = size, lambda = lambda.first.dist, newobj="first.dist.diff",seed.as.integer = seed.first.dist,datasources=ds.test_env$connection.opal)
+  ds.rPois.o(samp.size = size, lambda = lambda.second.dist, newobj="second.dist.diff",seed.as.integer = seed.second.dist,datasources=ds.test_env$connection.opal)
+  
+  # compute errors
+  errors <- .compute.errors.between.distributions("first.dist.diff","second.dist.diff",size)
+  
+  # test 
+  expect_equal(errors[ds.test_env$MEAN],lambda.first.dist - lambda.second.dist, tolerance = 10^1)
+  expect_equal(errors[ds.test_env$VARIANCE],lambda.first.dist - lambda.second.dist, tolerance = 10^1)
+  
+
+}
+
+.test.lambda.mean.var <- function(seed, lambda.vector)
+{
+  size <- 20000
+  ds.rPois.o(samp.size = size, lambda = lambda.vector, newobj="first.dist",seed.as.integer = seed, datasources=ds.test_env$connection.opal)
+  first.dist <- .calc.distribution.server("first.dist")
+  expect_equal(first.dist[1],lambda.vector[1],tolerance = 10^1)
+  expect_equal(first.dist[2],lambda.vector[1],tolerance = 10^1)
 }
