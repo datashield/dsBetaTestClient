@@ -40,7 +40,7 @@ The server side function returns a list with the sum of the input variable, the 
 of the input variable, the number of missing values, the number of valid values, the number of
 total lenght of the variable, and a study message indicating whether the number of valid is less
 than the disclosure threshold. The variance is calculated at the client side by the formula 
-$var(X)=\frac{\sum{x_i^2}}{N-1}-\frac{(\sum{x_i})^2}{N(N-1)}$
+$\deqn{var(X)}{\frac{\sum{x_i^2}}{N-1}-\frac{(\sum{x_i})^2}{N(N-1)}}$
 }
 \examples{
 {
