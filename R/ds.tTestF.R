@@ -80,7 +80,7 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
   
   # if no opal login details are provided look for 'opal' objects in the environment
   if(is.null(datasources)){
-    datasources <- findLoginObjects()
+    datasources <- dsBaseClient:::findLoginObjects()
   }
   
   # verify that 'formula' was set
@@ -107,14 +107,14 @@ ds.tTestF <- function(formula=NULL, data=NULL, family="gaussian", offset=NULL, w
   
   # if the argument 'data' is set, check that the data frame is defined (i.e. exists) on the server site
   if(!(is.null(data))){
-    defined <- isDefined(datasources, data)
+    defined <- dsBaseClient:::isDefined(datasources, data)
   }
   
   # beginning of optional checks - the process stops if any of these checks fails #
   if(checks){
     message(" -- Verifying the variables in the model")
     # call the function that checks the variables in the formula are defined (exist) on the server site and are not missing at complete
-    glmChecks(formula, data, offset, weights, datasources)
+    dsBaseClient:::glmChecks(formula, data, offset, weights, datasources)
   }else{
     #message("WARNING:'checks' is set to FALSE; variables in the model are not checked and error messages may not be intelligible!")
   }

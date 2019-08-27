@@ -16,15 +16,15 @@ tTestHelper2 <- function(formula, CI, datasources) {
   b <- unlist(strsplit(formula, split='~'))[2]
   
   # check if the variables in the formula are defined in all the studies, if not defined a message is thrown and the process stops
-  defined <- isDefined(datasources, a)
-  defined <- isDefined(datasources, b)
+  defined <- dsBaseClient:::isDefined(datasources, a)
+  defined <- dsBaseClient:::isDefined(datasources, b)
   
   # Check that the variables in the formula are of the right type: 'numeric'/'integer' for the outcome and 'factor' for the covariate
-  typ1 <- checkClass(datasources, a)
+  typ1 <- dsBaseClient:::checkClass(datasources, a)
   if(typ1 != "numeric" & typ1 != "integer"){
     stop(paste0(" ", a, " must be a numeric vector!"), call.=FALSE)
   }
-  typ2 <- checkClass(datasources, b)
+  typ2 <- dsBaseClient:::checkClass(datasources, b)
   if(typ2 != "factor"){
     stop(paste0(" ", b, " must be a factor vector!"), call.=FALSE)
   }else{

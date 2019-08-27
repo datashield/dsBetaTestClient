@@ -18,12 +18,12 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
   # or just as a vector not attached to a table (i.e. x)
   # we have to make sure the function deals with each case
   if(is.null(y)){
-    xname <- extract(x)
+    xname <- dsBaseClient:::extract(x)
     dname = xname$elements
     variables <- dname
   }else{
-    xname <- extract(x)
-    yname <- extract(y)
+    xname <- dsBaseClient:::extract(x)
+    yname <- dsBaseClient:::extract(y)
     dname1 = xname$elements
     dname2 = yname$elements
     variables <- c(dname1, dname2)
@@ -34,31 +34,31 @@ tTestHelper1 <- function(x, y, type, alternative, mu, paired, var.equal, conf.le
   if(is.null(y)){
     obj2lookfor <- xname$holders
     if(is.na(obj2lookfor)){
-      defined <- isDefined(datasources, variables[1])
+      defined <- dsBaseClient:::isDefined(datasources, variables[1])
     }else{
-      defined <- isDefined(datasources, obj2lookfor)
+      defined <- dsBaseClient:::isDefined(datasources, obj2lookfor)
     }
   }else{
     obj2lookfor1 <- xname$holders
     obj2lookfor2 <- yname$holders
     if(is.na(obj2lookfor1)){
-      defined <- isDefined(datasources, variables[1])
+      defined <- dsBaseClient:::isDefined(datasources, variables[1])
     }else{
-      defined <- isDefined(datasources, obj2lookfor1)
+      defined <- dsBaseClient:::isDefined(datasources, obj2lookfor1)
     }
     if(is.na(obj2lookfor2)){
-      defined <- isDefined(datasources, variables[2])
+      defined <- dsBaseClient:::isDefined(datasources, variables[2])
     }else{
-      defined <- isDefined(datasources, obj2lookfor2)
+      defined <- dsBaseClient:::isDefined(datasources, obj2lookfor2)
     }
   }
   
   # call the internal function that checks an input object is of the same class in all studies.
   if(is.null(y)){
-    typ1 <- checkClass(datasources, x)
+    typ1 <- dsBaseClient:::checkClass(datasources, x)
   }else{
-    typ1 <- checkClass(datasources, x)
-    typ2 <- checkClass(datasources, y)
+    typ1 <- dsBaseClient:::checkClass(datasources, x)
+    typ2 <- dsBaseClient:::checkClass(datasources, y)
   }
   
   # number of studies

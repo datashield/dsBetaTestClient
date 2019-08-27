@@ -25,7 +25,7 @@ ds.dataFrameFill <- function(df.name=NULL, newobj=NULL, datasources=NULL){
   
   # if no opal login details are provided look for 'opal' objects in the environment
   if(is.null(datasources)){
-    datasources <- findLoginObjects()
+    datasources <- dsBaseClient:::findLoginObjects()
   }
   
   # check if user has provided the name of the data.frame to be subsetted
@@ -39,7 +39,7 @@ ds.dataFrameFill <- function(df.name=NULL, newobj=NULL, datasources=NULL){
   }
   
   # check if the input object is defined in all the studies
-  defined <- isDefined(datasources, df.name)
+  defined <- dsBaseClient:::isDefined(datasources, df.name)
   
   # if the input object is not defined in any study then return an error message
   if(defined == FALSE){
@@ -47,7 +47,7 @@ ds.dataFrameFill <- function(df.name=NULL, newobj=NULL, datasources=NULL){
   }
   
   # call the internal function that checks the input object is of the same class in all studies.
-  typ <- checkClass(datasources, df.name)
+  typ <- dsBaseClient:::checkClass(datasources, df.name)
   
   # if the input object is not a matrix or a dataframe stop
   if(typ != 'data.frame' & typ != 'matrix'){
@@ -56,7 +56,7 @@ ds.dataFrameFill <- function(df.name=NULL, newobj=NULL, datasources=NULL){
   
   column.names <- list()
   for (i in 1:length(datasources)){
-    column.names[[i]] <- ds.colnames(df.name, datasources=datasources[[i]])
+    column.names[[i]] <- dsBaseClient::ds.colnames(df.name, datasources=datasources[[i]])
   }
   
   allNames <- unique(unlist(column.names))

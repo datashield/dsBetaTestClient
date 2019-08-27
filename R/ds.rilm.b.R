@@ -64,7 +64,7 @@ is.whole <- function(x){
 	}
 	
 	if(is.null(datasources)){
-		datasources <- findLoginObjects()
+		datasources <- dsBaseClient:::findLoginObjects()
 	}
 
 	# Find the number of centers.
