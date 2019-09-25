@@ -129,7 +129,7 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
     #message("WARNING:'checks' is set to FALSE; variables in the model are not checked and error messages may not be intelligible!")
   }
 
-  
+ 
   #NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
   
   cally2 <- call('lmerSLMADS2.o', formula, offset, weights, dataName, REML)
@@ -137,38 +137,29 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
   study.summary <- datashield.aggregate(datasources, cally2)
   
   numstudies<-length(datasources)
-  
+
   numstudies<-length(datasources)
-  
+
   study.include.in.analysis<-NULL
   study.with.errors<-NULL
   all.studies.valid<-1
   no.studies.valid<-1
-  
+
   for(j in 1:numstudies)
   {
-    ss1<-unlist(study.summary[[j]][[1]])
-    if(is.numeric(ss1))
+    ss1<-study.summary[[j]]
+    if(ss1$disclosure.risk==0)
     {
-
-      inv.diag.se<-1/sqrt(Matrix::diag(study.summary[[j]]$cov.scaled))
-      
-      cor.matrix<-t(diag(inv.diag.se))%*%study.summary[[j]]$cov.scaled%*%(diag(inv.diag.se))
-      cor.matrix@Dimnames = study.summary[[j]]$cov.scaled@Dimnames
-      study.summary[[j]]$VarCovMatrix<-study.summary[[j]]$cov.scaled
-      study.summary[[j]]$CorrMatrix<-cor.matrix
-      study.summary[[j]]$RE<-as.data.frame(study.summary[[j]]$RE)
       study.include.in.analysis<-c(study.include.in.analysis,j)
       no.studies.valid<-0
-      
+
     }else{
       study.with.errors<-c(study.with.errors,j)
       all.studies.valid<-0
     }
-    
+
   }
-  
-  
+
   if(!all.studies.valid)
   {
     for(sse in study.with.errors)
@@ -177,7 +168,7 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
       cat("############################################################","\n")
       cat(unlist(study.summary[[sse]][[1]]),"\n")
       cat(unlist(study.summary[[sse]][[2]]),"\n\n")
-      
+
       num.messages<-length(study.summary[[sse]])-2
       for(m in 1:num.messages)
       {
@@ -185,73 +176,72 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
         {
           cat(unlist(study.summary[[sse]][[2+m]]),"\n\n")
         }
-      }	
+      }
     }
   }
-  
-  
+
   if(all.studies.valid)
   {
     cat("\nAll studies passed disclosure tests\n\n\n")
   }
-  
- 
-  
-  
-  #MAKE SURE THAT IF SOME STUDIES HAVE MORE PARAMETERS IN THE 
+
+
+
+
+  #MAKE SURE THAT IF SOME STUDIES HAVE MORE PARAMETERS IN THE
   #FITTED glm (eg BECAUSE OF ALIASING) THE FINAL RETURN MATRICES
   #HAVE ENOUGH ROWS TO FIT THE MAXIMUM LENGTH
-  
-  
+
+
   numcoefficients.max<-0
-  
-  for(g in study.include.in.analysis){		
-    if(length(study.summary[[g]]$coefficients[,1])>numcoefficients.max){
-      numcoefficients.max<-length(study.summary[[g]]$coefficients[,1])
+
+  for(g in study.include.in.analysis){
+    if(length(study.summary[[g]][[1]]$coefficients[,1])>numcoefficients.max){
+      numcoefficients.max<-length(study.summary[[g]][[1]]$coefficients[,1])
     }
   }
-  
+
   numcoefficients<-numcoefficients.max
-  
+
   betamatrix<-matrix(NA,nrow<-numcoefficients,ncol=numstudies)
   sematrix<-matrix(NA,nrow<-numcoefficients,ncol=numstudies)
-  
-  
+
+
   for(k in study.include.in.analysis){
-    betamatrix[,k]<-study.summary[[k]]$coefficients[,1]
-    sematrix[,k]<-study.summary[[k]]$coefficients[,2]
+    betamatrix[,k]<-study.summary[[k]][[1]]$coefficients[,1]
+    sematrix[,k]<-study.summary[[k]][[1]]$coefficients[,2]
   }
-  
+
   ################################################
   #ANNOTATE OUTPUT MATRICES WITH STUDY INDICATORS#
   ################################################
-  
+
   study.names.list<-NULL
   betas.study.names.list<-NULL
   ses.study.names.list<-NULL
-  
-  
-  
+
+
+
   for(v in 1:numstudies){
-    
+
     study.names.list<-c(study.names.list,paste0("study",as.character(v)))
     betas.study.names.list<-c(betas.study.names.list,paste0("betas study ",as.character(v)))
     ses.study.names.list<-c(ses.study.names.list,paste0("ses study ",as.character(v)))
   }
-  
-  dimnames(betamatrix)<-list(dimnames(study.summary[[1]]$coefficients)[[1]], betas.study.names.list)
-  dimnames(sematrix)<-list(dimnames(study.summary[[1]]$coefficients)[[1]], ses.study.names.list)
-  
+
+  dimnames(betamatrix)<-list(dimnames(study.summary[[1]][[1]]$coefficients)[[1]], betas.study.names.list)
+  dimnames(sematrix)<-list(dimnames(study.summary[[1]][[1]]$coefficients)[[1]], ses.study.names.list)
+
   output.summary.text<-paste0("list(")
-  
+
   for(u in 1:numstudies){
     output.summary.text<-paste0(output.summary.text,"study",as.character(u),"=study.summary[[",as.character(u),"]],"," ")
   }
-  
+
   output.summary.text.save<-output.summary.text
   output.summary.text<-paste0(output.summary.text,"input.beta.matrix.for.SLMA=as.matrix(betamatrix),input.se.matrix.for.SLMA=as.matrix(sematrix))")
-  
-  
+
+
   output.summary<-eval(parse(text=output.summary.text))
   #######################END OF ANNOTATION CODE
 
@@ -261,58 +251,102 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
   if(!combine.with.metafor){
     return(output.summary)
   }
-
-
-  # #IF combine.with.metafor == TRUE, FIRST CHECK THAT THE MODELS IN EACH STUDY MATCH
-  # #IF THERE ARE DIFFERENT NUMBERS OF PARAMETERS THE ANALYST WILL
-  # #HAVE TO USE THE RETURNED MATRICES FOR betas AND ses TO DETERMINE WHETHER
-  # #COMBINATION ACROSS STUDIES IS POSSIBLE AND IF SO, WHICH PARAMETERS GO WITH WHICH
-  # if(combine.with.metafor){
-  #   numstudies<-length(datasources)
-  #   coefficient.vectors.match<-TRUE
-  #   for(j in 1:(numstudies-1)){
-  #     if(dim(study.summary[[j]]$coefficients)[1]!=dim(study.summary[[(j+1)]]$coefficients)[1])coefficient.vectors.match<-FALSE
-  #   }
-  #   if(!coefficient.vectors.match){
-  #     cat("\n\nModels in different sources vary in structure\nplease match coefficients for meta-analysis individually\n\n")
-  #     return(output.summary)
-  #   }
-  #   
-  #   #IF combine.with.metafor == TRUE AND MODEL STRUCTURES MATCH ACROSS ALL STUDIES
-  #   #CREATE STUDY LEVEL META-ANALYSIS (SLMA) ESTIMATES FOR ALL PARAMETERS
-  #   #USING metafor() AND THREE APPROACHES TO SLMA: SLMA UNDER MAXIMUM LIKELIHOOD (SMLA-ML)
-  #   #SLMA UNDER RESTRICTED MAXIMUM LIKELIHOOD (SMLA-REML) AND USING FIXED EFFECTS (SLMA-FE)
-  #   
-  #   dimnames(SLMA.pooled.ests.matrix)<-list(dimnames(study.summary[[1]]$coefficients)[[1]],
-  #                                           c("pooled.ML","se.ML","pooled.REML","se.REML","pooled.FE","se.FE"))
-  #   
-  #   for(p in 1:numcoefficients){
-  #     rma.ML<-rma(yi=betamatrix[p,], sei=sematrix[p,], method="ML")
-  #     rma.REML<-rma(yi=betamatrix[p,], sei=sematrix[p,], method="REML")
-  #     rma.FE<-rma(yi=betamatrix[p,], sei=sematrix[p,], method="FE")
-  #     
-  #     SLMA.pooled.ests.matrix[p,1]<-rma.ML$beta
-  #     SLMA.pooled.ests.matrix[p,2]<-rma.ML$se
-  #     
-  #     SLMA.pooled.ests.matrix[p,3]<-rma.REML$beta
-  #     SLMA.pooled.ests.matrix[p,4]<-rma.REML$se
-  #     
-  #     SLMA.pooled.ests.matrix[p,5]<-rma.FE$beta
-  #     SLMA.pooled.ests.matrix[p,6]<-rma.FE$se
-  #     
-  #   }
-  #   
-  # }
-  # 
-  # output.summary.plus.pooled.SLMA.text<-paste0(output.summary.text.save,
-  #                                              "input.beta.matrix.for.SLMA=as.matrix(betamatrix),input.se.matrix.for.SLMA=as.matrix(sematrix),SLMA.pooled.estimates=SLMA.pooled.ests.matrix)")
-  # 
-  # 
-  # output.summary.plus.pooled.SLMA<-eval(parse(text=output.summary.plus.pooled.SLMA.text))
-  # 
-  # 
-  #  return(output.summary.plus.pooled.SLMA)
-  #return(study.summary)
+  
+  if(no.studies.valid)
+  {
+    return(output.summary)
+  }
+  
+  #NOW ONLY WORKING WITH SITUATIONS WITH AT LEAST ONE VALID STUDY
+  
+  #IF combine.with.metafor == TRUE, FIRST CHECK THAT THE MODELS IN EACH STUDY MATCH
+  #IF THERE ARE DIFFERENT NUMBERS OF PARAMETERS THE ANALYST WILL
+  #HAVE TO USE THE RETURNED MATRICES FOR betas AND ses TO DETERMINE WHETHER
+  #COMBINATION ACROSS STUDIES IS POSSIBLE AND IF SO, WHICH PARAMETERS GO WITH WHICH
+  #ALSO DETERMINE WHICH STUDIES HAVE VALID DATA
+  
+  beta.matrix.for.SLMA<-as.matrix(betamatrix)
+  se.matrix.for.SLMA<-as.matrix(sematrix)
+  
+  #SELECT VALID COLUMNS ONLY (THERE WILL ALWAYS BE AT LEAST ONE)
+  
+  usecols<-NULL
+  
+  for(ut in 1:(dim(beta.matrix.for.SLMA)[2]))
+  {
+    if(!is.na(beta.matrix.for.SLMA[1,ut])&&!is.null(beta.matrix.for.SLMA[1,ut]))
+    {
+      usecols<-c(usecols,ut)
+    }
+  }
+  
+  
+  betamatrix.all<-beta.matrix.for.SLMA
+  sematrix.all<-se.matrix.for.SLMA
+  
+  betamatrix.valid<-beta.matrix.for.SLMA[,usecols]
+  sematrix.valid<-se.matrix.for.SLMA[,usecols]
+  
+  #CHECK FOR MATCHED PARAMETERS
+  
+  num.valid.studies<-as.numeric(dim(as.matrix(betamatrix.valid))[2])
+  coefficient.vectors.match<-TRUE
+  
+  
+  
+  if(num.valid.studies>1){
+    for(j in 1:(num.valid.studies-1))
+    {
+      if(length(betamatrix.valid[,j])!=length(betamatrix.valid[,(j+1)]))coefficient.vectors.match<-FALSE
+    }
+  }else{
+    coefficient.vectors.match<-TRUE
+  }
+  
+  
+  
+  
+  if(!coefficient.vectors.match){
+    cat("\n\nModels in different sources vary in structure\nplease match coefficients for meta-analysis individually\n")
+    cat("nYou can use the DataSHIELD generated estimates and standard errors as the basis for a meta-analysis\nbut carry out the final pooling step independently of DataSHIELD using whatever meta-analysis package you wish\n\n")
+    return(list(output.summary=output.summary))
+  }
+  
+  
+  
+  #IF combine.with.metafor == TRUE AND MODEL STRUCTURES MATCH ACROSS ALL STUDIES
+  #CREATE STUDY LEVEL META-ANALYSIS (SLMA) ESTIMATES FOR ALL PARAMETERS
+  #USING metafor() AND THREE APPROACHES TO SLMA: SLMA UNDER MAXIMUM LIKELIHOOD (SMLA-ML)
+  #SLMA UNDER RESTRICTED MAXIMUM LIKELIHOOD (SMLA-REML) AND USING FIXED EFFECTS (SLMA-FE)
+  
+  dimnames(SLMA.pooled.ests.matrix)<-list(dimnames(betamatrix.valid)[[1]],
+                                          c("pooled.ML","se.ML","pooled.REML","se.REML","pooled.FE","se.FE"))
+  
+  
+  
+  
+  
+  for(p in 1:numcoefficients){
+    rma.ML<-metafor::rma(yi=as.matrix(betamatrix.valid)[p,], sei=as.matrix(sematrix.valid)[p,], method="ML")
+    rma.REML<-metafor::rma(yi=as.matrix(betamatrix.valid)[p,], sei=as.matrix(sematrix.valid)[p,], method="REML")
+    rma.FE<-metafor::rma(yi=as.matrix(betamatrix.valid)[p,], sei=as.matrix(sematrix.valid)[p,], method="FE")
+    
+    SLMA.pooled.ests.matrix[p,1]<-rma.ML$beta
+    SLMA.pooled.ests.matrix[p,2]<-rma.ML$se
+    
+    SLMA.pooled.ests.matrix[p,3]<-rma.REML$beta
+    SLMA.pooled.ests.matrix[p,4]<-rma.REML$se
+    
+    SLMA.pooled.ests.matrix[p,5]<-rma.FE$beta
+    SLMA.pooled.ests.matrix[p,6]<-rma.FE$se
+    
+  }
+  
+  
+  
+  return(list(output.summary=output.summary, num.valid.studies=num.valid.studies,betamatrix.all=betamatrix.all,sematrix.all=sematrix.all, betamatrix.valid=betamatrix.valid,sematrix.valid=sematrix.valid,
+              SLMA.pooled.ests.matrix=SLMA.pooled.ests.matrix))
+  
 }
 
 # ds.lmerSLMA.o
