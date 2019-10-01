@@ -14,7 +14,7 @@
 #' the model to be fitted. Most shortcut notation allowed by Rlme4's lmer() function is
 #' also allowed by ds.lmerSLMA. Many lmes can be fitted very simply using a formula like:
 #' "y~a+b+(1|c)" which simply means fit a lme with y as the outcome variable with a and b as fixed effects, and c
-#' as a random effect or grouping factor. This allows for a random slope between groups.
+#' as a random effect or grouping factor. This allows for a random intercept between groups.
 #' By default all such models also include an intercept (regression constant) term.
 #' It is also possible to fit models with random slopes by specifying a model such as "y~a+b+(1+b|c)"
 #' @param offset  A character string specifying the name of a variable to be used as
@@ -128,10 +128,14 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
   }else{
     #message("WARNING:'checks' is set to FALSE; variables in the model are not checked and error messages may not be intelligible!")
   }
-
+  
+  #formula as text, then split at pipes to avoid triggering parser
+  formula <- Reduce(paste, deparse(formula))
+  #formula <- gsub("|", "5428314", formula, fixed = TRUE)
+  #formula <- strsplit(x = formurand()la, split="|", fixed=TRUE)[[1]]
  
   #NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
-  
+
   cally2 <- call('lmerSLMADS2.o', formula, offset, weights, dataName, REML)
   
   study.summary <- datashield.aggregate(datasources, cally2)
