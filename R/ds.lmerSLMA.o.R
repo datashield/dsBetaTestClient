@@ -130,7 +130,7 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
   }
   
   #formula as text, then split at pipes to avoid triggering parser
-  #formula <- Reduce(paste, deparse(formula))
+  formula <- Reduce(paste, deparse(formula))
   formula <- gsub("|", "5428314", formula, fixed = TRUE)
   #formula <- strsplit(x = formurand()la, split="|", fixed=TRUE)[[1]]
  
