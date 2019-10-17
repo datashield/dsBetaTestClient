@@ -13,6 +13,8 @@ Depends:
     dsModellingClient,
     DSI,
     stats
+Imports:
+    metafor
 Suggests:
     knitr,
     DSLite,

@@ -131,9 +131,13 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
   
   #formula as text, then split at pipes to avoid triggering parser
   formula <- Reduce(paste, deparse(formula))
-  formula <- gsub("|", "5428314", formula, fixed = TRUE)
+  formula <- gsub("|", "xxx", formula, fixed = TRUE)
+  formula <- gsub("(", "yyy", formula, fixed = TRUE)
+  formula <- gsub(")", "zzz", formula, fixed = TRUE)
+  formula <- gsub(" ", "", formula, fixed = TRUE)
+  formula <- as.formula(formula)
   #formula <- strsplit(x = formurand()la, split="|", fixed=TRUE)[[1]]
- 
+
   #NOW CALL SECOND COMPONENT OF glmDS TO GENERATE SCORE VECTORS AND INFORMATION MATRICES
 
   cally2 <- call('lmerSLMADS2.o', formula, offset, weights, dataName, REML)
