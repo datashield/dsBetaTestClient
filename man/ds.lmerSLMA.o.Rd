@@ -13,7 +13,7 @@ ds.lmerSLMA.o(formula = NULL, offset = NULL, weights = NULL,
 the model to be fitted. Most shortcut notation allowed by Rlme4's lmer() function is
 also allowed by ds.lmerSLMA. Many lmes can be fitted very simply using a formula like:
 "y~a+b+(1|c)" which simply means fit a lme with y as the outcome variable with a and b as fixed effects, and c
-as a random effect or grouping factor. This allows for a random slope between groups.
+as a random effect or grouping factor. This allows for a random intercept between groups.
 By default all such models also include an intercept (regression constant) term.
 It is also possible to fit models with random slopes by specifying a model such as "y~a+b+(1+b|c)"}
 

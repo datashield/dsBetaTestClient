@@ -134,6 +134,8 @@ ds.lmerSLMA.o<-function(formula=NULL, offset=NULL, weights=NULL, combine.with.me
   formula <- gsub("|", "xxx", formula, fixed = TRUE)
   formula <- gsub("(", "yyy", formula, fixed = TRUE)
   formula <- gsub(")", "zzz", formula, fixed = TRUE)
+  formula <- gsub("/", "ppp", formula, fixed = TRUE)
+  formula <- gsub(":", "qqq", formula, fixed = TRUE)
   formula <- gsub(" ", "", formula, fixed = TRUE)
   formula <- as.formula(formula)
   #formula <- strsplit(x = formurand()la, split="|", fixed=TRUE)[[1]]
