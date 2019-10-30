@@ -12,6 +12,8 @@
 # Set up
 #
 
+context("ds.gee::arg::setup")
+
 connect.studies.dataset.cnsim(list("LAB_TSC"))
 
 #
